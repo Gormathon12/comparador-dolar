@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comparador Dólar AR — Comprar y Vender (Oficial & MEP)</title>
+  <title>Comparador Dólar AR — Comprar, Vender MEP y Brecha</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -155,11 +155,11 @@
     }
     .btn-ghost:hover { color: var(--text); border-color: #3b4b6b; }
 
-    /* Main Operation Tabs (Comprar vs Vender MEP) */
+    /* Main Operation Tabs */
     .main-tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       padding: 6px;
@@ -170,14 +170,15 @@
     .main-tab {
       background: transparent;
       color: var(--text-muted);
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 10px;
-      font-size: 0.96rem;
+      font-size: 0.92rem;
       font-weight: 700;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 2px;
     }
 
     .main-tab:hover {
@@ -199,10 +200,17 @@
       box-shadow: 0 4px 16px rgba(167, 139, 250, 0.14);
     }
 
+    .main-tab.active-brecha {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(16, 185, 129, 0.14));
+      color: #fde68a;
+      border: 1px solid rgba(251, 191, 36, 0.5);
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.14);
+    }
+
     .tab-sub {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 500;
-      opacity: 0.8;
+      opacity: 0.82;
     }
 
     /* Winner Banner */
@@ -223,6 +231,11 @@
       border-color: rgba(167, 139, 250, 0.48);
     }
 
+    .winner-card.brecha-theme {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.16) 0%, rgba(16, 185, 129, 0.12) 100%);
+      border-color: rgba(251, 191, 36, 0.48);
+    }
+
     .winner-eyebrow {
       font-size: 0.78rem;
       text-transform: uppercase;
@@ -232,12 +245,11 @@
       margin-bottom: 4px;
     }
 
-    .winner-card.sell-theme .winner-eyebrow {
-      color: var(--purple);
-    }
+    .winner-card.sell-theme .winner-eyebrow { color: var(--purple); }
+    .winner-card.brecha-theme .winner-eyebrow { color: var(--amber); }
 
     .winner-title {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       display: flex;
@@ -258,11 +270,11 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
       padding: 12px 18px;
       border-radius: 12px;
+      min-width: 195px;
     }
 
-    .winner-card.sell-theme .winner-price-box {
-      border-color: rgba(167, 139, 250, 0.35);
-    }
+    .winner-card.sell-theme .winner-price-box { border-color: rgba(167, 139, 250, 0.35); }
+    .winner-card.brecha-theme .winner-price-box { border-color: rgba(251, 191, 36, 0.4); }
 
     .winner-price-label {
       font-size: 0.75rem;
@@ -272,14 +284,19 @@
     }
 
     .winner-price {
-      font-size: 1.9rem;
+      font-size: 1.85rem;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       color: var(--accent);
     }
 
-    .winner-card.sell-theme .winner-price {
-      color: #c4b5fd;
+    .winner-card.sell-theme .winner-price { color: #c4b5fd; }
+    .winner-card.brecha-theme .winner-price { color: #fde68a; }
+
+    .winner-price-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
     }
 
     /* Simulator */
@@ -337,9 +354,7 @@
       height: 38px;
     }
 
-    .amount-input-wrap:focus-within {
-      border-color: var(--blue);
-    }
+    .amount-input-wrap:focus-within { border-color: var(--blue); }
 
     .amount-prefix {
       color: var(--text-muted);
@@ -371,6 +386,59 @@
       color: var(--text);
       font-variant-numeric: tabular-nums;
     }
+
+    /* Brecha Selectors */
+    .brecha-controls {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .brecha-controls.visible { display: flex; }
+
+    .select-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .select-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .select-field label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .select-field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      font-weight: 600;
+      min-width: 210px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-field select:focus { border-color: var(--amber); }
 
     .filter-row {
       display: flex;
@@ -412,11 +480,20 @@
       box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.22);
     }
 
+    .quote-card.best.brecha-best {
+      border-color: rgba(251, 191, 36, 0.6);
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.22);
+    }
+
     .card-top {
       display: grid;
       grid-template-columns: auto 1.45fr 1fr 1fr 1.1fr auto;
       gap: 16px;
       align-items: center;
+    }
+
+    .card-top.brecha-top {
+      grid-template-columns: auto 1.55fr 1fr 1fr 1.15fr;
     }
 
     .rank-badge {
@@ -444,6 +521,12 @@
       border-color: rgba(167, 139, 250, 0.45);
     }
 
+    .quote-card.best.brecha-best .rank-badge {
+      background: var(--amber-soft);
+      color: var(--amber);
+      border-color: rgba(251, 191, 36, 0.45);
+    }
+
     .entity-info {
       display: flex;
       flex-direction: column;
@@ -460,6 +543,11 @@
     .entity-name {
       font-weight: 700;
       font-size: 1rem;
+    }
+
+    .arrow-sep {
+      color: var(--amber);
+      font-weight: 800;
     }
 
     .badge {
@@ -507,13 +595,9 @@
       font-weight: 800;
     }
 
-    .quote-card.best .metric-val.final {
-      color: var(--accent);
-    }
-
-    .quote-card.best.sell-best .metric-val.final {
-      color: #c4b5fd;
-    }
+    .quote-card.best .metric-val.final { color: var(--accent); }
+    .quote-card.best.sell-best .metric-val.final { color: #c4b5fd; }
+    .quote-card.best.brecha-best .metric-val.final { color: #fde68a; }
 
     .metric-sub {
       font-size: 0.75rem;
@@ -539,13 +623,9 @@
       transition: width 0.35s ease;
     }
 
-    .quote-card.best .bar-fill {
-      background: linear-gradient(90deg, #10b981, #34d399);
-    }
-
-    .quote-card.best.sell-best .bar-fill {
-      background: linear-gradient(90deg, #a78bfa, #c084fc);
-    }
+    .quote-card.best .bar-fill { background: linear-gradient(90deg, #10b981, #34d399); }
+    .quote-card.best.sell-best .bar-fill { background: linear-gradient(90deg, #a78bfa, #c084fc); }
+    .quote-card.best.brecha-best .bar-fill { background: linear-gradient(90deg, #fbbf24, #10b981); }
 
     .edit-drawer {
       margin-top: 14px;
@@ -613,9 +693,7 @@
       margin-bottom: 6px;
     }
 
-    .info-card ul {
-      padding-left: 18px;
-    }
+    .info-card ul { padding-left: 18px; }
 
     footer {
       margin-top: 28px;
@@ -625,9 +703,7 @@
     }
 
     @media (max-width: 860px) {
-      .card-top {
-        grid-template-columns: auto 1fr auto;
-      }
+      .card-top, .card-top.brecha-top { grid-template-columns: auto 1fr auto; }
       .winner-card { grid-template-columns: 1fr; }
       .winner-price-box { text-align: left; }
       .main-tabs { grid-template-columns: 1fr; }
@@ -641,7 +717,7 @@
         <div class="brand-icon">$</div>
         <div>
           <h1>Comparador Dólar AR</h1>
-          <div class="subtitle">Comprar y vender USD (Oficial y MEP) en vivo con comisiones incluidas</div>
+          <div class="subtitle">Comprar Oficial, Vender USD MEP y calcular la Brecha neta en vivo</div>
         </div>
       </div>
       <div class="header-actions">
@@ -658,11 +734,15 @@
     <nav class="main-tabs" role="tablist" aria-label="Operación">
       <button id="tabBuy" class="main-tab active-buy" role="tab" aria-selected="true" onclick="setOperation('buy')">
         <span>🛒 Comprar USD</span>
-        <span class="tab-sub">(más barato primero)</span>
+        <span class="tab-sub">Más barato primero</span>
       </button>
       <button id="tabSell" class="main-tab" role="tab" aria-selected="false" onclick="setOperation('sell')">
         <span>💸 Vender USD MEP</span>
-        <span class="tab-sub">(el que más te paga primero)</span>
+        <span class="tab-sub">El que más te paga primero</span>
+      </button>
+      <button id="tabBrecha" class="main-tab" role="tab" aria-selected="false" onclick="setOperation('brecha')">
+        <span>📈 Brecha (Oficial → MEP)</span>
+        <span class="tab-sub">Ganancia neta en pesos</span>
       </button>
     </nav>
 
@@ -676,6 +756,7 @@
       <div class="winner-price-box">
         <div class="winner-price-label" id="winnerPriceLabel">Precio final por USD</div>
         <div class="winner-price" id="winnerPrice">—</div>
+        <div class="winner-price-sub" id="winnerPriceSub"></div>
       </div>
     </section>
 
@@ -699,10 +780,32 @@
       </div>
     </section>
 
+    <!-- Brecha Controls (solo visible en solapa Brecha) -->
+    <section class="brecha-controls" id="brechaControls">
+      <div class="select-group">
+        <div class="select-field">
+          <label for="brechaBuySelect">Compro Oficial en</label>
+          <select id="brechaBuySelect" onchange="render()">
+            <option value="all">Todos los bancos oficiales</option>
+          </select>
+        </div>
+        <div class="select-field">
+          <label for="brechaSellSelect">Vendo MEP en</label>
+          <select id="brechaSellSelect" onchange="render()">
+            <option value="all">Todas las plataformas MEP</option>
+          </select>
+        </div>
+      </div>
+      <div class="segmented">
+        <button id="brechaScopeAll" class="active" onclick="setBrechaScope('all')">Todas las combinaciones</button>
+        <button id="brechaScopeFav" onclick="setBrechaScope('fav')">Solo mis elegidas</button>
+      </div>
+    </section>
+
     <!-- Filter & Ranking -->
     <div class="filter-row">
       <div class="section-title" id="rankingTitle">Ranking de compra (del más barato al más caro)</div>
-      <div class="segmented">
+      <div class="segmented" id="standardFilters">
         <button id="filterAll" class="active" onclick="setFilter('all')">Todos (15)</button>
         <button id="filterFav" onclick="setFilter('fav')">Mis elegidas</button>
         <button id="filterOficial" onclick="setFilter('Oficial')">Solo Oficial</button>
@@ -727,16 +830,16 @@
       <div class="info-card">
         <h3>⚡ Cocos, Ualá, Fiwind &amp; Plus — MEP</h3>
         <ul>
-          <li><strong>Cocos MEP, Fiwind MEP y Plus Inversiones:</strong> cotización <strong>en vivo</strong> (compra y venta) desde <em>ComparaDólar</em>. En Cocos se aplica 0,45% estándar (editable a 0% si tenés plan bonificado).</li>
+          <li><strong>Cocos MEP, Fiwind MEP y Plus Inversiones:</strong> cotización <strong>en vivo</strong> desde <em>ComparaDólar</em>. En Cocos se aplica 0,45% estándar (editable a 0% si tenés plan bonificado).</li>
           <li><strong>Ualá MEP:</strong> la comisión viene incluida en la app (~1% est.); se calcula automáticamente con el MEP de mercado en vivo.</li>
         </ul>
       </div>
 
       <div class="info-card">
-        <h3>🏦 Bancos Oficiales en vivo y Galicia</h3>
+        <h3>📈 Sobre la Brecha Oficial → MEP</h3>
         <ul>
-          <li><strong>En vivo 100% automático:</strong> Ualá, Banco Nación, Provincia, Ciudad, Hipotecario, Brubank Oficial, Cocos Bank, Balanz y Reba vienen directo desde <em>ComparaDólar</em> (tanto compra como venta).</li>
-          <li><strong>Banco Galicia:</strong> se calcula automáticamente con el <strong>Oficial en vivo + spread automático</strong> (0% en horario bancario lun-vie 10 a 15hs; ±0,95% fuera de horario / fines de semana).</li>
+          <li><strong>Cálculo neto:</strong> <code>(Precio venta MEP − comisión) − Precio compra Oficial</code>. Cualquier ajuste manual que hagas en <em>Comprar</em> o <em>Vender MEP</em> se refleja automáticamente acá.</li>
+          <li><strong>Normativa:</strong> Verificá siempre las restricciones cruzadas vigentes entre dólar oficial y MEP (BCRA / CNV) antes de operar.</li>
         </ul>
       </div>
     </section>
@@ -951,10 +1054,11 @@
     ];
 
     let items = structuredClone(DEFAULT_ITEMS);
-    let overrides = loadOverrides(); // { buy: { id: {price, feePct} }, sell: { id: {price, feePct} } }
-    let operation = "buy"; // 'buy' | 'sell'
+    let overrides = loadOverrides();
+    let operation = "buy"; // 'buy' | 'sell' | 'brecha'
     let simMode = "usd";   // 'usd' | 'ars'
     let activeFilter = "all";
+    let brechaScope = "all"; // 'all' | 'fav'
     let openDrawers = new Set();
     let refs = {
       oficialAsk: null, oficialBid: null,
@@ -985,7 +1089,8 @@
 
     const fmtARS = (n, decimals = 2) => {
       if (n == null || isNaN(n)) return "—";
-      return "$ " + Number(n).toLocaleString("es-AR", {
+      const sign = n < 0 ? "−" : "";
+      return sign + "$ " + Math.abs(Number(n)).toLocaleString("es-AR", {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals
       });
@@ -1023,6 +1128,25 @@
       }
     }
 
+    function populateBrechaSelects() {
+      const buySel = document.getElementById("brechaBuySelect");
+      const sellSel = document.getElementById("brechaSellSelect");
+      const prevBuy = buySel.value;
+      const prevSell = sellSel.value;
+
+      const oficiales = items.filter(i => i.type === "Oficial");
+      const meps = items.filter(i => i.type === "MEP");
+
+      buySel.innerHTML = `<option value="all">Todos los bancos oficiales</option>` +
+        oficiales.map(i => `<option value="${i.id}">${i.name}${i.fav ? " ★" : ""}</option>`).join("");
+
+      sellSel.innerHTML = `<option value="all">Todas las plataformas MEP</option>` +
+        meps.map(i => `<option value="${i.id}">${i.name}${i.fav ? " ★" : ""}</option>`).join("");
+
+      if ([...buySel.options].some(o => o.value === prevBuy)) buySel.value = prevBuy;
+      if ([...sellSel.options].some(o => o.value === prevSell)) sellSel.value = prevSell;
+    }
+
     async function fetchAllData() {
       const btn = document.getElementById("refreshBtn");
       const dot = document.getElementById("statusDot");
@@ -1057,7 +1181,6 @@
         });
       }
 
-      // 1. Entidades en vivo desde ComparaDólar (ask y bid)
       items.forEach(item => {
         if (!item.slug) return;
         const entry = cdMap.get(item.slug);
@@ -1073,7 +1196,6 @@
 
       const getItem = (id) => items.find(i => i.id === id);
 
-      // 2. Banco Galicia Oficial (automático)
       const galicia = getItem("galicia-oficial");
       const cyGalicia = criptoyaBancos?.galicia;
       const nowSec = Date.now() / 1000;
@@ -1096,7 +1218,6 @@
           : "Automático (Oficial BNA ± 0,95% fuera de horario)";
       }
 
-      // 3. Brubank MEP (MEP en vivo + 0,6% al comprar / -0,6% al vender)
       const brubankMep = getItem("brubank-mep");
       if (refs.mepAsk) {
         brubankMep.askPrice = Number(refs.mepAsk);
@@ -1105,7 +1226,6 @@
         brubankMep.sourceLabel = "Automático (MEP en vivo ± 0,6% Brubank)";
       }
 
-      // 4. Ualá MEP (MEP en vivo + 1% al comprar / -1% al vender)
       const ualaMep = getItem("uala-mep");
       if (refs.mepAsk) {
         ualaMep.askPrice = Number(refs.mepAsk);
@@ -1113,6 +1233,8 @@
         ualaMep.source = "est";
         ualaMep.sourceLabel = "Automático (MEP en vivo ± comisión est.)";
       }
+
+      populateBrechaSelects();
 
       const anySuccess = Boolean(comparadolar || criptoyaDolar || dolarApi);
       btn.disabled = false;
@@ -1132,21 +1254,31 @@
       operation = op;
       openDrawers.clear();
 
-      const tabBuy = document.getElementById("tabBuy");
-      const tabSell = document.getElementById("tabSell");
-      tabBuy.className = "main-tab" + (op === "buy" ? " active-buy" : "");
-      tabSell.className = "main-tab" + (op === "sell" ? " active-sell" : "");
-      tabBuy.setAttribute("aria-selected", op === "buy");
-      tabSell.setAttribute("aria-selected", op === "sell");
+      document.getElementById("tabBuy").className = "main-tab" + (op === "buy" ? " active-buy" : "");
+      document.getElementById("tabSell").className = "main-tab" + (op === "sell" ? " active-sell" : "");
+      document.getElementById("tabBrecha").className = "main-tab" + (op === "brecha" ? " active-brecha" : "");
 
-      // Al pasar a "Vender USD MEP", filtramos automáticamente a MEP (el usuario igual puede tocar Todos o Solo Oficial)
+      document.getElementById("tabBuy").setAttribute("aria-selected", op === "buy");
+      document.getElementById("tabSell").setAttribute("aria-selected", op === "sell");
+      document.getElementById("tabBrecha").setAttribute("aria-selected", op === "brecha");
+
+      document.getElementById("brechaControls").classList.toggle("visible", op === "brecha");
+      document.getElementById("standardFilters").style.display = op === "brecha" ? "none" : "inline-flex";
+
       if (op === "sell") {
         setFilter("MEP", false);
-      } else if (activeFilter === "MEP") {
+      } else if (op === "buy" && activeFilter === "MEP") {
         setFilter("all", false);
       }
 
       updateSimLabels();
+      render();
+    }
+
+    function setBrechaScope(scope) {
+      brechaScope = scope;
+      document.getElementById("brechaScopeAll").classList.toggle("active", scope === "all");
+      document.getElementById("brechaScopeFav").classList.toggle("active", scope === "fav");
       render();
     }
 
@@ -1156,26 +1288,28 @@
       if (operation === "buy") {
         btnUsd.textContent = "Quiero comprar USD";
         btnArs.textContent = "Tengo pesos ARS";
-      } else {
+      } else if (operation === "sell") {
         btnUsd.textContent = "Quiero vender USD";
         btnArs.textContent = "Quiero recibir ARS";
+      } else {
+        btnUsd.textContent = "Operar en USD";
+        btnArs.textContent = "Capital en pesos ARS";
       }
     }
 
-    function computeRow(item) {
-      const opOverrides = overrides[operation] || {};
+    function computeRowFor(item, op) {
+      const opOverrides = overrides[op] || {};
       const ov = opOverrides[item.id] || {};
       const hasManualPrice = ov.price !== undefined && ov.price !== "" && !isNaN(Number(ov.price));
       const hasManualFee = ov.feePct !== undefined && ov.feePct !== "" && !isNaN(Number(ov.feePct));
 
-      const rawPrice = operation === "buy" ? item.askPrice : item.bidPrice;
+      const rawPrice = op === "buy" ? item.askPrice : item.bidPrice;
       const basePrice = hasManualPrice ? Number(ov.price) : rawPrice;
       const feePct = hasManualFee ? Number(ov.feePct) : item.defaultFeePct;
 
       const feePerUsd = basePrice != null ? basePrice * (feePct / 100) : null;
-      // Al comprar: pagás base + comisión. Al vender: recibís base - comisión.
       const finalPrice = basePrice != null
-        ? (operation === "buy" ? basePrice + feePerUsd : basePrice - feePerUsd)
+        ? (op === "buy" ? basePrice + feePerUsd : basePrice - feePerUsd)
         : null;
 
       let sourceType = item.source;
@@ -1228,11 +1362,12 @@
     }
 
     function updateOverride(id, field, value) {
-      if (!overrides[operation]) overrides[operation] = {};
-      if (!overrides[operation][id]) overrides[operation][id] = {};
-      if (value === "" || value === null) delete overrides[operation][id][field];
-      else overrides[operation][id][field] = Number(value);
-      if (Object.keys(overrides[operation][id]).length === 0) delete overrides[operation][id];
+      const op = operation === "brecha" ? "buy" : operation;
+      if (!overrides[op]) overrides[op] = {};
+      if (!overrides[op][id]) overrides[op][id] = {};
+      if (value === "" || value === null) delete overrides[op][id][field];
+      else overrides[op][id][field] = Number(value);
+      if (Object.keys(overrides[op][id]).length === 0) delete overrides[op][id];
       saveOverrides();
       render();
     }
@@ -1243,18 +1378,165 @@
       render();
     }
 
+    function renderBrecha(amount) {
+      const winnerCard = document.getElementById("winnerCard");
+      winnerCard.className = "winner-card brecha-theme";
+
+      document.getElementById("refOficial").textContent = fmtARS(refs.oficialAsk);
+      document.getElementById("refMep").textContent = fmtARS(refs.mepBid);
+      document.getElementById("refBlue").textContent = fmtARS(refs.blueBid);
+
+      const buyChoice = document.getElementById("brechaBuySelect").value;
+      const sellChoice = document.getElementById("brechaSellSelect").value;
+
+      const buyOficiales = items
+        .filter(i => i.type === "Oficial")
+        .filter(i => brechaScope === "all" || i.fav)
+        .filter(i => buyChoice === "all" || i.id === buyChoice)
+        .map(i => computeRowFor(i, "buy"))
+        .filter(r => r.finalPrice != null);
+
+      const sellMeps = items
+        .filter(i => i.type === "MEP")
+        .filter(i => brechaScope === "all" || i.fav)
+        .filter(i => sellChoice === "all" || i.id === sellChoice)
+        .map(i => computeRowFor(i, "sell"))
+        .filter(r => r.finalPrice != null);
+
+      const pairs = [];
+      buyOficiales.forEach(b => {
+        sellMeps.forEach(s => {
+          const spreadPerUsd = s.finalPrice - b.finalPrice;
+          const spreadPct = (spreadPerUsd / b.finalPrice) * 100;
+
+          let usdCount = amount;
+          let investedArs = amount * b.finalPrice;
+          let receivedArs = amount * s.finalPrice;
+          if (simMode === "ars") {
+            investedArs = amount;
+            usdCount = amount / b.finalPrice;
+            receivedArs = usdCount * s.finalPrice;
+          }
+          const profitArs = receivedArs - investedArs;
+
+          pairs.push({
+            buy: b,
+            sell: s,
+            spreadPerUsd,
+            spreadPct,
+            usdCount,
+            investedArs,
+            receivedArs,
+            profitArs
+          });
+        });
+      });
+
+      pairs.sort((a, b) => b.spreadPct - a.spreadPct);
+
+      const best = pairs[0] || null;
+      const worst = pairs[pairs.length - 1] || null;
+
+      document.getElementById("rankingTitle").textContent =
+        `Combinaciones de Brecha (${pairs.length} rutas: de mayor ganancia a menor)`;
+      document.getElementById("winnerEyebrow").textContent =
+        "🏆 Mejor brecha neta hoy (Comprás Oficial → Vendés MEP)";
+      document.getElementById("winnerPriceLabel").textContent = "Brecha neta por USD";
+
+      if (best) {
+        const isPos = best.spreadPerUsd >= 0;
+        const sign = isPos ? "+" : "";
+        document.getElementById("winnerTitle").innerHTML =
+          `${best.buy.name} <span class="badge badge-oficial">Oficial</span> <span class="arrow-sep">→</span> ${best.sell.name} <span class="badge badge-mep">MEP</span>`;
+        document.getElementById("winnerPrice").textContent = `${sign}${fmtPct(best.spreadPct)}`;
+        document.getElementById("winnerPriceSub").textContent = `${sign}${fmtARS(best.spreadPerUsd)} por USD`;
+
+        const actionText = simMode === "usd"
+          ? `Operando ${fmtUSD(amount)} (invertís ${fmtARS(best.investedArs, 0)} y recibís ${fmtARS(best.receivedArs, 0)}), te quedan ${sign}${fmtARS(best.profitArs, 0)} netos.`
+          : `Con ${fmtARS(amount, 0)} comprás ${fmtUSD(best.usdCount)} y al vender MEP recibís ${fmtARS(best.receivedArs, 0)} (${sign}${fmtARS(best.profitArs, 0)} netos).`;
+
+        document.getElementById("winnerSub").textContent =
+          `Comprás a ${fmtARS(best.buy.finalPrice)} y vendés neto a ${fmtARS(best.sell.finalPrice)}. ${actionText}`;
+      } else {
+        document.getElementById("winnerTitle").textContent = "Sin combinaciones para los filtros elegidos";
+        document.getElementById("winnerPrice").textContent = "—";
+        document.getElementById("winnerPriceSub").textContent = "";
+        document.getElementById("winnerSub").textContent = "Cambiá los selectores de banco o plataforma arriba.";
+      }
+
+      const maxPct = best ? best.spreadPct : 1;
+      const minPct = worst ? worst.spreadPct : 0;
+      const pctRange = Math.max(maxPct - minPct, 0.1);
+
+      const grid = document.getElementById("cardsGrid");
+      grid.innerHTML = pairs.slice(0, 25).map((p, idx) => {
+        const isBest = idx === 0;
+        const isPos = p.spreadPerUsd >= 0;
+        const sign = isPos ? "+" : "";
+        const barPct = Math.max(15, Math.round(35 + ((p.spreadPct - minPct) / pctRange) * 65));
+
+        return `
+          <article class="quote-card ${isBest ? "best brecha-best" : ""}">
+            <div class="card-top brecha-top">
+              <div class="rank-badge">${isBest ? "★" : "#" + (idx + 1)}</div>
+
+              <div class="entity-info">
+                <div class="entity-name-row">
+                  <span class="entity-name">${p.buy.name}</span>
+                  <span class="badge badge-oficial">Oficial</span>
+                  <span class="arrow-sep">→</span>
+                  <span class="entity-name">${p.sell.name}</span>
+                  <span class="badge badge-mep">MEP</span>
+                </div>
+                <div class="entity-meta">
+                  Compra: ${p.buy.sourceLabel} · Venta MEP: ${p.sell.sourceLabel} (com. −${fmtPct(p.sell.feePct)})
+                </div>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">Comprás → Vendés</span>
+                <span class="metric-val">${fmtARS(p.buy.finalPrice)}</span>
+                <span class="metric-sub">Vendés neto: ${fmtARS(p.sell.finalPrice)}</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">Brecha neta</span>
+                <span class="metric-val final ${isPos ? "" : "diff-bad"}">${sign}${fmtPct(p.spreadPct)}</span>
+                <span class="metric-sub ${isPos ? "diff-good" : "diff-bad"}">${sign}${fmtARS(p.spreadPerUsd)} / USD</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">${isPos ? "Ganancia estimada" : "Resultado estimado"}</span>
+                <span class="metric-val ${isPos ? "diff-good" : "diff-bad"}">${sign}${fmtARS(p.profitArs, 0)}</span>
+                <span class="metric-sub">Recibís ${fmtARS(p.receivedArs, 0)} (${fmtUSD(p.usdCount)})</span>
+              </div>
+            </div>
+
+            <div class="bar-track">
+              <div class="bar-fill" style="width: ${barPct}%"></div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
     function render() {
-      const isSell = operation === "sell";
       const amount = Math.max(0, Number(document.getElementById("amountInput").value) || 0);
 
-      // Actualizar referencias según modo (venta vs compra)
+      if (operation === "brecha") {
+        renderBrecha(amount);
+        return;
+      }
+
+      const isSell = operation === "sell";
+      document.getElementById("winnerPriceSub").textContent = "";
+
       document.getElementById("refOficial").textContent = fmtARS(isSell ? refs.oficialBid : refs.oficialAsk);
       document.getElementById("refMep").textContent = fmtARS(isSell ? refs.mepBid : refs.mepAsk);
       document.getElementById("refBlue").textContent = fmtARS(isSell ? refs.blueBid : refs.blueAsk);
 
-      // Ordenar: en compra ascendente (más barato primero); en venta descendente (el que más paga primero)
       const allComputed = items
-        .map(computeRow)
+        .map(item => computeRowFor(item, operation))
         .filter(r => r.finalPrice != null)
         .sort((a, b) => isSell ? (b.finalPrice - a.finalPrice) : (a.finalPrice - b.finalPrice));
 
@@ -1267,9 +1549,8 @@
       const best = visible[0] || null;
       const worst = visible[visible.length - 1] || null;
 
-      // Estilos y títulos del Banner
       const winnerCard = document.getElementById("winnerCard");
-      winnerCard.classList.toggle("sell-theme", isSell);
+      winnerCard.className = "winner-card" + (isSell ? " sell-theme" : "");
 
       document.getElementById("rankingTitle").textContent = isSell
         ? "Ranking de venta (del que más te paga al que menos paga)"
@@ -1277,7 +1558,7 @@
 
       document.getElementById("winnerPriceLabel").textContent = isSell
         ? "Recibís neto por USD"
-        : "Precio final por USD";
+        : "Pagás final por USD";
 
       const scopeLabel = activeFilter === "fav"
         ? "entre tus elegidas"
@@ -1394,7 +1675,6 @@
           }
         }
 
-        // En compra: barra más corta = mejor; en venta: barra más larga = mejor
         const barPct = !isSell
           ? Math.round(35 + ((row.finalPrice - bestP) / spreadRange) * 65)
           : Math.round(100 - ((bestP - row.finalPrice) / spreadRange) * 65);
@@ -1403,7 +1683,6 @@
         const ov = (overrides[operation] || {})[row.id] || {};
         const priceInputVal = ov.price !== undefined ? ov.price : row.basePrice.toFixed(2);
         const feeInputVal = ov.feePct !== undefined ? ov.feePct : row.defaultFeePct;
-
         const feeSignText = isSell ? "−" : "+";
 
         return `
