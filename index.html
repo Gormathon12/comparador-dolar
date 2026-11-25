@@ -158,13 +158,13 @@
     /* Main Operation Tabs */
     .main-tabs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       padding: 6px;
       border-radius: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .main-tab {
@@ -206,6 +206,101 @@
       border: 1px solid rgba(251, 191, 36, 0.5);
       box-shadow: 0 4px 16px rgba(251, 191, 36, 0.14);
     }
+
+    .main-tab.active-market {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(16, 185, 129, 0.14));
+      color: #bae6fd;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.14);
+    }
+
+    /* Market Status Bar */
+    .market-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      font-size: 0.83rem;
+    }
+
+    .market-indicators {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      color: var(--text-muted);
+    }
+
+    .mkt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .mkt-open { color: var(--accent); }
+    .mkt-closed { color: var(--rose); }
+
+    .open-only-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .open-only-toggle.active {
+      background: var(--accent-soft);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+    }
+
+    .badge-247 { background: rgba(16, 185, 129, 0.16); color: #34d399; }
+    .badge-closed { background: var(--rose-soft); color: var(--rose); }
+
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .market-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+
+    .market-panel h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .market-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(38, 49, 72, 0.6);
+      gap: 10px;
+    }
+
+    .market-row:last-child { border-bottom: none; }
 
     .tab-sub {
       font-size: 0.72rem;
@@ -744,7 +839,23 @@
         <span>📈 Brecha (Oficial → MEP)</span>
         <span class="tab-sub">Ganancia neta en pesos</span>
       </button>
+      <button id="tabMarket" class="main-tab" role="tab" aria-selected="false" onclick="setOperation('market')">
+        <span>🕐 Mercado</span>
+        <span class="tab-sub" id="tabMarketSub">Abierto / Cerrado</span>
+      </button>
     </nav>
+
+    <!-- Live Market Status Bar + Global Filter -->
+    <section class="market-bar" id="marketBar">
+      <div class="market-indicators" id="marketIndicators">
+        <span class="mkt-chip" id="artClockChip">🕐 --:-- ART</span>
+        <span class="mkt-chip" id="bankStatusChip">Bancos: —</span>
+        <span class="mkt-chip" id="mepStatusChip">Bolsa MEP: —</span>
+      </div>
+      <button id="openOnlyBtn" class="open-only-toggle" onclick="toggleOpenOnly()">
+        <span>⚡ Solo abiertos ahora (24/7)</span>
+      </button>
+    </section>
 
     <!-- Winner Banner -->
     <section class="winner-card" id="winnerCard">
@@ -1055,11 +1166,19 @@
     ];
 
     let items = structuredClone(DEFAULT_ITEMS);
+    // Horarios por defecto (se actualizan en vivo con is24x7 de ComparaDólar)
+    const DEFAULT_24X7_IDS = new Set([
+      "uala-oficial", "galicia-oficial", "cocos-mep",
+      "cocos-bank-oficial", "brubank-oficial", "reba-oficial"
+    ]);
+    items.forEach(i => { i.is24x7 = DEFAULT_24X7_IDS.has(i.id); });
+
     let overrides = loadOverrides();
-    let operation = "buy"; // 'buy' | 'sell' | 'brecha'
+    let operation = "buy"; // 'buy' | 'sell' | 'brecha' | 'market'
     let simMode = "usd";   // 'usd' | 'ars'
     let activeFilter = "all";
-    let brechaScope = "all"; // 'all' | 'fav'
+    let brechaScope = "all"; // 'all' | 'live' | 'fav'
+    let openOnly = false;
     let openDrawers = new Set();
     let refs = {
       oficialAsk: null, oficialBid: null,
@@ -1110,12 +1229,69 @@
       return Number(n).toLocaleString("es-AR", { maximumFractionDigits: 2 }) + "%";
     };
 
-    function isArgentinaBankingHours() {
+    function getArgentinaNow() {
       const now = new Date();
-      const art = new Date(now.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
-      const day = art.getDay();
+      return new Date(now.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
+    }
+
+    function getMarketStatus() {
+      const art = getArgentinaNow();
+      const day = art.getDay(); // 0 dom, 6 sab
       const hr = art.getHours();
-      return day >= 1 && day <= 5 && hr >= 10 && hr < 15;
+      const min = art.getMinutes();
+      const isWeekday = day >= 1 && day <= 5;
+      const banksOpen = isWeekday && hr >= 10 && hr < 15;
+      const mepOpen = isWeekday && hr >= 11 && hr < 17;
+      const hhmm = String(hr).padStart(2, "0") + ":" + String(min).padStart(2, "0");
+      return { art, day, hr, isWeekday, banksOpen, mepOpen, hhmm };
+    }
+
+    function isArgentinaBankingHours() {
+      return getMarketStatus().banksOpen;
+    }
+
+    function isItemOpenNow(item) {
+      if (item.is24x7) return true;
+      const st = getMarketStatus();
+      return item.type === "MEP" ? st.mepOpen : st.banksOpen;
+    }
+
+    function getItemScheduleText(item) {
+      if (item.is24x7) return "Opera 24/7";
+      return item.type === "MEP" ? "Lun–Vie 11:00 a 17:00 hs" : "Lun–Vie 10:00 a 15:00 hs";
+    }
+
+    function getOpenBadgeHtml(item) {
+      if (item.is24x7) return `<span class="badge badge-247">⚡ 24/7</span>`;
+      return isItemOpenNow(item)
+        ? `<span class="badge badge-live">🟢 Abierto</span>`
+        : `<span class="badge badge-closed">🔒 Cerrado</span>`;
+    }
+
+    function updateMarketBar() {
+      const st = getMarketStatus();
+      document.getElementById("artClockChip").textContent = `🕐 ${st.hhmm} ART`;
+
+      const bankChip = document.getElementById("bankStatusChip");
+      bankChip.className = "mkt-chip " + (st.banksOpen ? "mkt-open" : "mkt-closed");
+      bankChip.textContent = st.banksOpen ? "🟢 Bancos: Abiertos (10–15hs)" : "🔴 Bancos: Cerrados (solo 24/7)";
+
+      const mepChip = document.getElementById("mepStatusChip");
+      mepChip.className = "mkt-chip " + (st.mepOpen ? "mkt-open" : "mkt-closed");
+      mepChip.textContent = st.mepOpen ? "🟢 Bolsa MEP: Abierta (11–17hs)" : "🔴 Bolsa MEP: Cerrada (solo 24/7)";
+
+      const sub = document.getElementById("tabMarketSub");
+      sub.textContent = (st.banksOpen || st.mepOpen) ? "Abierto ahora" : "Solo 24/7 activos";
+    }
+
+    function toggleOpenOnly() {
+      openOnly = !openOnly;
+      const btn = document.getElementById("openOnlyBtn");
+      btn.classList.toggle("active", openOnly);
+      btn.innerHTML = openOnly
+        ? `<span>⚡ Mostrando solo abiertos ahora ✓</span>`
+        : `<span>⚡ Solo abiertos ahora (24/7)</span>`;
+      render();
     }
 
     async function fetchJsonSafe(url) {
@@ -1188,6 +1364,7 @@
         if (entry) {
           if (entry.ask) item.askPrice = Number(entry.ask);
           if (entry.bid) item.bidPrice = Number(entry.bid);
+          if (typeof entry.is24x7 === "boolean") item.is24x7 = entry.is24x7;
           item.source = entry.stale ? "est" : "live";
           item.sourceLabel = entry.stale
             ? "ComparaDólar (dato demorado)"
@@ -1258,13 +1435,17 @@
       document.getElementById("tabBuy").className = "main-tab" + (op === "buy" ? " active-buy" : "");
       document.getElementById("tabSell").className = "main-tab" + (op === "sell" ? " active-sell" : "");
       document.getElementById("tabBrecha").className = "main-tab" + (op === "brecha" ? " active-brecha" : "");
+      document.getElementById("tabMarket").className = "main-tab" + (op === "market" ? " active-market" : "");
 
       document.getElementById("tabBuy").setAttribute("aria-selected", op === "buy");
       document.getElementById("tabSell").setAttribute("aria-selected", op === "sell");
       document.getElementById("tabBrecha").setAttribute("aria-selected", op === "brecha");
+      document.getElementById("tabMarket").setAttribute("aria-selected", op === "market");
 
       document.getElementById("brechaControls").classList.toggle("visible", op === "brecha");
-      document.getElementById("standardFilters").style.display = op === "brecha" ? "none" : "inline-flex";
+      document.getElementById("standardFilters").style.display = (op === "brecha" || op === "market") ? "none" : "inline-flex";
+      document.querySelector(".sim-bar").style.display = op === "market" ? "none" : "flex";
+      document.getElementById("openOnlyBtn").style.display = op === "market" ? "none" : "inline-flex";
 
       if (op === "sell") {
         setFilter("MEP", false);
@@ -1380,6 +1561,68 @@
       render();
     }
 
+    function renderMarketTab() {
+      const st = getMarketStatus();
+      const openItems = items.filter(isItemOpenNow);
+      const closedItems = items.filter(i => !isItemOpenNow(i));
+
+      const winnerCard = document.getElementById("winnerCard");
+      winnerCard.className = "winner-card";
+      document.getElementById("winnerEyebrow").textContent = "🕐 Estado del mercado argentino en vivo";
+
+      const anyMarketOpen = st.banksOpen || st.mepOpen;
+      document.getElementById("winnerTitle").innerHTML = anyMarketOpen
+        ? `Mercado Abierto <span class="badge badge-live">${openItems.length} plataformas activas</span>`
+        : `Mercado Cerrado — Operan solo plataformas 24/7 <span class="badge badge-247">${openItems.length} activas</span>`;
+
+      document.getElementById("winnerSub").textContent =
+        `Hora Argentina: ${st.hhmm} ART · Bancos tradicionales: Lun–Vie 10:00–15:00 · Bolsa MEP (BYMA): Lun–Vie 11:00–17:00.`;
+      document.getElementById("winnerPriceLabel").textContent = "Operables ya mismo";
+      document.getElementById("winnerPrice").textContent = `${openItems.length} / ${items.length}`;
+      document.getElementById("winnerPriceSub").textContent = `${closedItems.length} cerradas ahora`;
+
+      document.getElementById("rankingTitle").textContent = "Disponibilidad horaria por plataforma";
+
+      const renderRow = (item) => {
+        const buyRow = computeRowFor(item, "buy");
+        const sellRow = computeRowFor(item, "sell");
+        const typeBadge = item.type === "Oficial"
+          ? `<span class="badge badge-oficial">Oficial</span>`
+          : `<span class="badge badge-mep">MEP</span>`;
+        const priceInfo = item.type === "MEP"
+          ? `Vendés: ${fmtARS(sellRow.finalPrice)}`
+          : `Comprás: ${fmtARS(buyRow.finalPrice)}`;
+
+        return `
+          <div class="market-row">
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <strong>${item.name}</strong> ${typeBadge} ${getOpenBadgeHtml(item)}
+              </div>
+              <div style="font-size:0.76rem;color:var(--text-muted);margin-top:2px;">${getItemScheduleText(item)}</div>
+            </div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:0.86rem;font-weight:700;">
+              ${priceInfo}
+            </div>
+          </div>
+        `;
+      };
+
+      const grid = document.getElementById("cardsGrid");
+      grid.innerHTML = `
+        <div class="market-grid">
+          <div class="market-panel">
+            <h3><span>🟢 Abiertas ahora (${openItems.length})</span><span class="badge badge-247">Operables ya</span></h3>
+            ${openItems.map(renderRow).join("") || `<p style="color:var(--text-muted);font-size:0.85rem;">Ninguna abierta.</p>`}
+          </div>
+          <div class="market-panel">
+            <h3><span>🔒 Cerradas ahora (${closedItems.length})</span><span class="badge badge-closed">Fuera de horario</span></h3>
+            ${closedItems.map(renderRow).join("") || `<p style="color:var(--text-muted);font-size:0.85rem;">¡Todas están abiertas ahora!</p>`}
+          </div>
+        </div>
+      `;
+    }
+
     function renderBrecha(amount) {
       const winnerCard = document.getElementById("winnerCard");
       winnerCard.className = "winner-card brecha-theme";
@@ -1393,6 +1636,7 @@
 
       const buyOficiales = items
         .filter(i => i.type === "Oficial")
+        .filter(i => !openOnly || isItemOpenNow(i))
         .filter(i => brechaScope === "all" || (brechaScope === "fav" ? i.fav : i.source === "live"))
         .filter(i => buyChoice === "all" || i.id === buyChoice)
         .map(i => computeRowFor(i, "buy"))
@@ -1400,6 +1644,7 @@
 
       const sellMeps = items
         .filter(i => i.type === "MEP")
+        .filter(i => !openOnly || isItemOpenNow(i))
         .filter(i => brechaScope === "all" || (brechaScope === "fav" ? i.fav : i.source === "live"))
         .filter(i => sellChoice === "all" || i.id === sellChoice)
         .map(i => computeRowFor(i, "sell"))
@@ -1486,9 +1731,11 @@
                 <div class="entity-name-row">
                   <span class="entity-name">${p.buy.name}</span>
                   <span class="badge badge-oficial">Oficial</span>
+                  ${getOpenBadgeHtml(p.buy)}
                   <span class="arrow-sep">→</span>
                   <span class="entity-name">${p.sell.name}</span>
                   <span class="badge badge-mep">MEP</span>
+                  ${getOpenBadgeHtml(p.sell)}
                 </div>
                 <div class="entity-meta">
                   Compra: ${p.buy.sourceLabel} · Venta MEP: ${p.sell.sourceLabel} (com. −${fmtPct(p.sell.feePct)})
@@ -1523,7 +1770,13 @@
     }
 
     function render() {
+      updateMarketBar();
       const amount = Math.max(0, Number(document.getElementById("amountInput").value) || 0);
+
+      if (operation === "market") {
+        renderMarketTab();
+        return;
+      }
 
       if (operation === "brecha") {
         renderBrecha(amount);
@@ -1543,6 +1796,7 @@
         .sort((a, b) => isSell ? (b.finalPrice - a.finalPrice) : (a.finalPrice - b.finalPrice));
 
       const visible = allComputed.filter(r => {
+        if (openOnly && !isItemOpenNow(r)) return false;
         if (activeFilter === "all") return true;
         if (activeFilter === "fav") return r.fav;
         return r.type === activeFilter;
@@ -1696,6 +1950,7 @@
                 <div class="entity-name-row">
                   <span class="entity-name">${row.name}</span>
                   ${typeBadge}
+                  ${getOpenBadgeHtml(row)}
                   ${srcBadge}
                   ${favBadge}
                 </div>
