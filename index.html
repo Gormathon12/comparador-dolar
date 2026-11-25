@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comparador Dólar AR — Oficial vs MEP</title>
+  <title>Comparador Dólar AR — Comprar y Vender (Oficial & MEP)</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -48,7 +48,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .brand {
@@ -155,6 +155,57 @@
     }
     .btn-ghost:hover { color: var(--text); border-color: #3b4b6b; }
 
+    /* Main Operation Tabs (Comprar vs Vender MEP) */
+    .main-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    .main-tab {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .main-tab:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .main-tab.active-buy {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(14, 165, 233, 0.14));
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
+    }
+
+    .main-tab.active-sell {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.24), rgba(251, 191, 36, 0.12));
+      color: #ddd6fe;
+      border: 1px solid rgba(167, 139, 250, 0.5);
+      box-shadow: 0 4px 16px rgba(167, 139, 250, 0.14);
+    }
+
+    .tab-sub {
+      font-size: 0.74rem;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    /* Winner Banner */
     .winner-card {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(14, 165, 233, 0.08) 100%);
       border: 1px solid rgba(16, 185, 129, 0.42);
@@ -167,6 +218,11 @@
       align-items: center;
     }
 
+    .winner-card.sell-theme {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.18) 0%, rgba(251, 191, 36, 0.08) 100%);
+      border-color: rgba(167, 139, 250, 0.48);
+    }
+
     .winner-eyebrow {
       font-size: 0.78rem;
       text-transform: uppercase;
@@ -174,6 +230,10 @@
       color: var(--accent);
       font-weight: 700;
       margin-bottom: 4px;
+    }
+
+    .winner-card.sell-theme .winner-eyebrow {
+      color: var(--purple);
     }
 
     .winner-title {
@@ -200,6 +260,10 @@
       border-radius: 12px;
     }
 
+    .winner-card.sell-theme .winner-price-box {
+      border-color: rgba(167, 139, 250, 0.35);
+    }
+
     .winner-price-label {
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -214,6 +278,11 @@
       color: var(--accent);
     }
 
+    .winner-card.sell-theme .winner-price {
+      color: #c4b5fd;
+    }
+
+    /* Simulator */
     .sim-bar {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -338,6 +407,11 @@
       box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
     }
 
+    .quote-card.best.sell-best {
+      border-color: rgba(167, 139, 250, 0.6);
+      box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.22);
+    }
+
     .card-top {
       display: grid;
       grid-template-columns: auto 1.45fr 1fr 1fr 1.1fr auto;
@@ -362,6 +436,12 @@
       background: var(--accent-soft);
       color: var(--accent);
       border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .quote-card.best.sell-best .rank-badge {
+      background: var(--purple-soft);
+      color: var(--purple);
+      border-color: rgba(167, 139, 250, 0.45);
     }
 
     .entity-info {
@@ -431,6 +511,10 @@
       color: var(--accent);
     }
 
+    .quote-card.best.sell-best .metric-val.final {
+      color: #c4b5fd;
+    }
+
     .metric-sub {
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -457,6 +541,10 @@
 
     .quote-card.best .bar-fill {
       background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .quote-card.best.sell-best .bar-fill {
+      background: linear-gradient(90deg, #a78bfa, #c084fc);
     }
 
     .edit-drawer {
@@ -529,16 +617,6 @@
       padding-left: 18px;
     }
 
-    .highlight-box {
-      background: var(--amber-soft);
-      border: 1px solid rgba(251, 191, 36, 0.35);
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-top: 8px;
-      font-size: 0.82rem;
-      color: #fde68a;
-    }
-
     footer {
       margin-top: 28px;
       text-align: center;
@@ -552,6 +630,7 @@
       }
       .winner-card { grid-template-columns: 1fr; }
       .winner-price-box { text-align: left; }
+      .main-tabs { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -562,7 +641,7 @@
         <div class="brand-icon">$</div>
         <div>
           <h1>Comparador Dólar AR</h1>
-          <div class="subtitle">Bancos Oficiales y Dólar MEP en vivo con comisiones incluidas</div>
+          <div class="subtitle">Comprar y vender USD (Oficial y MEP) en vivo con comisiones incluidas</div>
         </div>
       </div>
       <div class="header-actions">
@@ -575,6 +654,18 @@
       </div>
     </header>
 
+    <!-- Main Operation Tabs -->
+    <nav class="main-tabs" role="tablist" aria-label="Operación">
+      <button id="tabBuy" class="main-tab active-buy" role="tab" aria-selected="true" onclick="setOperation('buy')">
+        <span>🛒 Comprar USD</span>
+        <span class="tab-sub">(más barato primero)</span>
+      </button>
+      <button id="tabSell" class="main-tab" role="tab" aria-selected="false" onclick="setOperation('sell')">
+        <span>💸 Vender USD MEP</span>
+        <span class="tab-sub">(el que más te paga primero)</span>
+      </button>
+    </nav>
+
     <!-- Winner Banner -->
     <section class="winner-card" id="winnerCard">
       <div>
@@ -583,7 +674,7 @@
         <div class="winner-sub" id="winnerSub">Obteniendo cotizaciones en vivo y aplicando comisiones.</div>
       </div>
       <div class="winner-price-box">
-        <div class="winner-price-label">Precio final por USD</div>
+        <div class="winner-price-label" id="winnerPriceLabel">Precio final por USD</div>
         <div class="winner-price" id="winnerPrice">—</div>
       </div>
     </section>
@@ -610,10 +701,10 @@
 
     <!-- Filter & Ranking -->
     <div class="filter-row">
-      <div class="section-title">Ranking de compra (del más barato al más caro)</div>
+      <div class="section-title" id="rankingTitle">Ranking de compra (del más barato al más caro)</div>
       <div class="segmented">
         <button id="filterAll" class="active" onclick="setFilter('all')">Todos (15)</button>
-        <button id="filterFav" onclick="setFilter('fav')">Mis 5 elegidas</button>
+        <button id="filterFav" onclick="setFilter('fav')">Mis elegidas</button>
         <button id="filterOficial" onclick="setFilter('Oficial')">Solo Oficial</button>
         <button id="filterMep" onclick="setFilter('MEP')">Solo MEP</button>
       </div>
@@ -627,38 +718,37 @@
       <div class="info-card">
         <h3>🟣 Brubank — Dólar MEP <span class="badge badge-mep">Tiene costo</span></h3>
         <ul>
-          <li><strong>Comisión:</strong> <strong>0,6%</strong> por operación (compra y venta), aplicada automáticamente al MEP AL30 en vivo.</li>
+          <li><strong>Comisión:</strong> <strong>0,6%</strong> por operación (se suma al comprar y se descuenta al vender).</li>
           <li><strong>Operador:</strong> Opera vía <strong>Balanz Capital</strong>.</li>
-          <li><strong>Acreditación:</strong> 24 horas hábiles al comprar; en el día al vender.</li>
+          <li><strong>Acreditación:</strong> 24hs hábiles al comprar; <strong>en el día</strong> al vender USD MEP.</li>
         </ul>
       </div>
 
       <div class="info-card">
         <h3>⚡ Cocos, Ualá, Fiwind &amp; Plus — MEP</h3>
         <ul>
-          <li><strong>Cocos MEP, Fiwind MEP y Plus Inversiones:</strong> cotización <strong>en vivo</strong> desde <em>ComparaDólar</em>. En Cocos se suma 0,45% estándar (editable a 0% si tenés plan bonificado).</li>
-          <li><strong>Ualá MEP:</strong> en la app ya viene la comisión incluida (hasta ~1% en bonos); al no tener API pública de MEP, se estima automáticamente con MEP AL30 + 1%.</li>
+          <li><strong>Cocos MEP, Fiwind MEP y Plus Inversiones:</strong> cotización <strong>en vivo</strong> (compra y venta) desde <em>ComparaDólar</em>. En Cocos se aplica 0,45% estándar (editable a 0% si tenés plan bonificado).</li>
+          <li><strong>Ualá MEP:</strong> la comisión viene incluida en la app (~1% est.); se calcula automáticamente con el MEP de mercado en vivo.</li>
         </ul>
       </div>
 
       <div class="info-card">
         <h3>🏦 Bancos Oficiales en vivo y Galicia</h3>
         <ul>
-          <li><strong>En vivo 100% automático:</strong> Ualá, Banco Nación, Provincia, Ciudad, Hipotecario, Brubank Oficial, Cocos Bank, Balanz y Reba vienen directo desde <em>ComparaDólar</em>.</li>
-          <li><strong>Banco Galicia:</strong> como Galicia no tiene API pública abierta, se calcula automáticamente usando el <strong>Oficial en vivo + spread automático</strong> (0% en horario bancario lun-vie 10 a 15hs; +0,95% fuera de horario / fines de semana / feriados).</li>
+          <li><strong>En vivo 100% automático:</strong> Ualá, Banco Nación, Provincia, Ciudad, Hipotecario, Brubank Oficial, Cocos Bank, Balanz y Reba vienen directo desde <em>ComparaDólar</em> (tanto compra como venta).</li>
+          <li><strong>Banco Galicia:</strong> se calcula automáticamente con el <strong>Oficial en vivo + spread automático</strong> (0% en horario bancario lun-vie 10 a 15hs; ±0,95% fuera de horario / fines de semana).</li>
         </ul>
       </div>
     </section>
 
     <footer>
-      Fuentes en vivo: ComparaDólar API · CriptoYa API · DolarApi. Auto-actualización disponible con el botón Actualizar. Verificá siempre el boleto final antes de confirmar.
+      Fuentes en vivo: ComparaDólar API · CriptoYa API · DolarApi. Al comprar, la comisión encarece el USD; al vender, la comisión se descuenta de los pesos que recibís. Verificá siempre el boleto final antes de confirmar.
     </footer>
   </div>
 
   <script>
-    const STORAGE_KEY = "comparador_dolar_ar_overrides_v2";
+    const STORAGE_KEY = "comparador_dolar_ar_overrides_v3";
 
-    // Las 5 originales del usuario marcadas con fav: true + 10 bancos/brokers en vivo
     const DEFAULT_ITEMS = [
       // === TUS 5 PRINCIPALES ===
       {
@@ -669,7 +759,8 @@
         fav: true,
         defaultFeePct: 0,
         feeNote: "Sin comisión extra · 24x7",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -680,8 +771,9 @@
         type: "Oficial",
         fav: true,
         defaultFeePct: 0,
-        feeNote: "Sin comisión extra sobre precio venta",
-        basePrice: null,
+        feeNote: "Sin comisión extra (spread incluido)",
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -693,7 +785,8 @@
         fav: true,
         defaultFeePct: 0.45,
         feeNote: "Comisión estándar ~0,45% (editable a 0% si bonificado)",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -704,8 +797,9 @@
         type: "MEP",
         fav: true,
         defaultFeePct: 0.6,
-        feeNote: "Comisión 0,6% (vía Balanz) · Acredita en 24hs hábiles",
-        basePrice: null,
+        feeNote: "Comisión 0,6% (vía Balanz) · Venta acredita en el día",
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -717,7 +811,8 @@
         fav: true,
         defaultFeePct: 1.0,
         feeNote: "Comisión incluida en la app (est. ~1% s/ MEP)",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -731,7 +826,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Dólar oficial en vivo · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -743,7 +839,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Banco público · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -755,7 +852,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Referencia BNA · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -767,7 +865,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "BAPRO · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -779,7 +878,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Banco privado · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -791,7 +891,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Oficial vía Cocos · Sin comisión extra",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -803,7 +904,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Billetera / Banco digital · 24x7",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -815,7 +917,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "Dólar oficial en Brubank · 24x7",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -827,7 +930,8 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "MEP en vivo (spread incluido)",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       },
@@ -839,22 +943,32 @@
         fav: false,
         defaultFeePct: 0,
         feeNote: "MEP en vivo (spread incluido)",
-        basePrice: null,
+        askPrice: null,
+        bidPrice: null,
         source: "loading",
         sourceLabel: "Cargando..."
       }
     ];
 
     let items = structuredClone(DEFAULT_ITEMS);
-    let overrides = loadOverrides();
-    let simMode = "usd";
+    let overrides = loadOverrides(); // { buy: { id: {price, feePct} }, sell: { id: {price, feePct} } }
+    let operation = "buy"; // 'buy' | 'sell'
+    let simMode = "usd";   // 'usd' | 'ars'
     let activeFilter = "all";
     let openDrawers = new Set();
-    let refs = { oficial: null, mep: null, blue: null };
+    let refs = {
+      oficialAsk: null, oficialBid: null,
+      mepAsk: null, mepBid: null,
+      blueAsk: null, blueBid: null
+    };
 
     function loadOverrides() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
-      catch { return {}; }
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        return { buy: parsed.buy || {}, sell: parsed.sell || {} };
+      } catch {
+        return { buy: {}, sell: {} };
+      }
     }
 
     function saveOverrides() {
@@ -863,7 +977,7 @@
     }
 
     function resetAllOverrides() {
-      overrides = {};
+      overrides = { buy: {}, sell: {} };
       saveOverrides();
       openDrawers.clear();
       render();
@@ -890,11 +1004,10 @@
       return Number(n).toLocaleString("es-AR", { maximumFractionDigits: 2 }) + "%";
     };
 
-    // Detecta si estamos en horario bancario habitual en Argentina (Lun-Vie 10 a 15hs ART)
     function isArgentinaBankingHours() {
       const now = new Date();
       const art = new Date(now.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
-      const day = art.getDay(); // 0 dom, 6 sab
+      const day = art.getDay();
       const hr = art.getHours();
       return day >= 1 && day <= 5 && hr >= 10 && hr < 15;
     }
@@ -930,26 +1043,12 @@
       const bolsaApi = Array.isArray(dolarApi) ? dolarApi.find(d => d.casa === "bolsa") : null;
       const blueApi = Array.isArray(dolarApi) ? dolarApi.find(d => d.casa === "blue") : null;
 
-      const mepRefPrice =
-        criptoyaDolar?.mep?.al30?.["24hs"]?.price ||
-        bolsaApi?.venta ||
-        null;
-
-      const oficialRefPrice =
-        criptoyaDolar?.oficial?.ask ||
-        oficialApi?.venta ||
-        null;
-
-      const blueRefPrice =
-        criptoyaDolar?.blue?.ask ||
-        blueApi?.venta ||
-        null;
-
-      refs = { oficial: oficialRefPrice, mep: mepRefPrice, blue: blueRefPrice };
-
-      document.getElementById("refOficial").textContent = fmtARS(refs.oficial);
-      document.getElementById("refMep").textContent = fmtARS(refs.mep);
-      document.getElementById("refBlue").textContent = fmtARS(refs.blue);
+      refs.oficialAsk = criptoyaDolar?.oficial?.ask || oficialApi?.venta || null;
+      refs.oficialBid = criptoyaDolar?.oficial?.bid || oficialApi?.compra || null;
+      refs.mepAsk = criptoyaDolar?.mep?.al30?.["24hs"]?.price || bolsaApi?.venta || null;
+      refs.mepBid = bolsaApi?.compra || criptoyaDolar?.mep?.al30?.ci?.price || refs.mepAsk;
+      refs.blueAsk = criptoyaDolar?.blue?.ask || blueApi?.venta || null;
+      refs.blueBid = criptoyaDolar?.blue?.bid || blueApi?.compra || null;
 
       const cdMap = new Map();
       if (Array.isArray(comparadolar)) {
@@ -958,12 +1057,13 @@
         });
       }
 
-      // 1. Todos los items que vienen directo de ComparaDólar en vivo
+      // 1. Entidades en vivo desde ComparaDólar (ask y bid)
       items.forEach(item => {
         if (!item.slug) return;
         const entry = cdMap.get(item.slug);
-        if (entry && entry.ask) {
-          item.basePrice = Number(entry.ask);
+        if (entry) {
+          if (entry.ask) item.askPrice = Number(entry.ask);
+          if (entry.bid) item.bidPrice = Number(entry.bid);
           item.source = entry.stale ? "est" : "live";
           item.sourceLabel = entry.stale
             ? "ComparaDólar (dato demorado)"
@@ -973,42 +1073,45 @@
 
       const getItem = (id) => items.find(i => i.id === id);
 
-      // 2. Banco Galicia Oficial: automático!
-      // Si CriptoYa tiene Galicia fresco (<= 2 días), lo usa en vivo.
-      // Si no, calcula automáticamente con BNA en vivo + spread típico Galicia (0% en horario bancario, +0,95% fuera de horario/feriado).
+      // 2. Banco Galicia Oficial (automático)
       const galicia = getItem("galicia-oficial");
       const cyGalicia = criptoyaBancos?.galicia;
       const nowSec = Date.now() / 1000;
       const galiciaAgeDays = cyGalicia?.time ? (nowSec - cyGalicia.time) / 86400 : 999;
 
       if (cyGalicia && cyGalicia.ask && galiciaAgeDays <= 2) {
-        galicia.basePrice = Number(cyGalicia.ask);
+        galicia.askPrice = Number(cyGalicia.ask);
+        galicia.bidPrice = Number(cyGalicia.bid || cyGalicia.ask * 0.968);
         galicia.source = "live";
         galicia.sourceLabel = "CriptoYa (En vivo)";
-      } else if (oficialRefPrice) {
+      } else if (refs.oficialAsk) {
         const inHours = isArgentinaBankingHours();
-        const spreadFactor = inHours ? 1.0 : 1.0095;
-        galicia.basePrice = Math.round(oficialRefPrice * spreadFactor);
+        galicia.askPrice = Math.round(refs.oficialAsk * (inHours ? 1.0 : 1.0095));
+        galicia.bidPrice = refs.oficialBid
+          ? Math.round(refs.oficialBid * (inHours ? 1.0 : 0.9905))
+          : Math.round(galicia.askPrice * 0.968);
         galicia.source = "est";
         galicia.sourceLabel = inHours
           ? "Automático (Oficial BNA horario bancario)"
-          : "Automático (Oficial BNA + 0,95% fuera de horario)";
+          : "Automático (Oficial BNA ± 0,95% fuera de horario)";
       }
 
-      // 3. Brubank MEP (MEP AL30 en vivo + 0,6% comisión Brubank)
+      // 3. Brubank MEP (MEP en vivo + 0,6% al comprar / -0,6% al vender)
       const brubankMep = getItem("brubank-mep");
-      if (mepRefPrice) {
-        brubankMep.basePrice = Number(mepRefPrice);
+      if (refs.mepAsk) {
+        brubankMep.askPrice = Number(refs.mepAsk);
+        brubankMep.bidPrice = Number(refs.mepBid || refs.mepAsk);
         brubankMep.source = "est";
-        brubankMep.sourceLabel = "Automático (MEP AL30 en vivo + 0,6% Brubank)";
+        brubankMep.sourceLabel = "Automático (MEP en vivo ± 0,6% Brubank)";
       }
 
-      // 4. Ualá MEP (MEP AL30 en vivo + 1% estimado)
+      // 4. Ualá MEP (MEP en vivo + 1% al comprar / -1% al vender)
       const ualaMep = getItem("uala-mep");
-      if (mepRefPrice) {
-        ualaMep.basePrice = Number(mepRefPrice);
+      if (refs.mepAsk) {
+        ualaMep.askPrice = Number(refs.mepAsk);
+        ualaMep.bidPrice = Number(refs.mepBid || refs.mepAsk);
         ualaMep.source = "est";
-        ualaMep.sourceLabel = "Automático (MEP AL30 en vivo + comisión est.)";
+        ualaMep.sourceLabel = "Automático (MEP en vivo ± comisión est.)";
       }
 
       const anySuccess = Boolean(comparadolar || criptoyaDolar || dolarApi);
@@ -1025,16 +1128,55 @@
       render();
     }
 
+    function setOperation(op) {
+      operation = op;
+      openDrawers.clear();
+
+      const tabBuy = document.getElementById("tabBuy");
+      const tabSell = document.getElementById("tabSell");
+      tabBuy.className = "main-tab" + (op === "buy" ? " active-buy" : "");
+      tabSell.className = "main-tab" + (op === "sell" ? " active-sell" : "");
+      tabBuy.setAttribute("aria-selected", op === "buy");
+      tabSell.setAttribute("aria-selected", op === "sell");
+
+      // Al pasar a "Vender USD MEP", filtramos automáticamente a MEP (el usuario igual puede tocar Todos o Solo Oficial)
+      if (op === "sell") {
+        setFilter("MEP", false);
+      } else if (activeFilter === "MEP") {
+        setFilter("all", false);
+      }
+
+      updateSimLabels();
+      render();
+    }
+
+    function updateSimLabels() {
+      const btnUsd = document.getElementById("modeUsdBtn");
+      const btnArs = document.getElementById("modeArsBtn");
+      if (operation === "buy") {
+        btnUsd.textContent = "Quiero comprar USD";
+        btnArs.textContent = "Tengo pesos ARS";
+      } else {
+        btnUsd.textContent = "Quiero vender USD";
+        btnArs.textContent = "Quiero recibir ARS";
+      }
+    }
+
     function computeRow(item) {
-      const ov = overrides[item.id] || {};
+      const opOverrides = overrides[operation] || {};
+      const ov = opOverrides[item.id] || {};
       const hasManualPrice = ov.price !== undefined && ov.price !== "" && !isNaN(Number(ov.price));
       const hasManualFee = ov.feePct !== undefined && ov.feePct !== "" && !isNaN(Number(ov.feePct));
 
-      const basePrice = hasManualPrice ? Number(ov.price) : item.basePrice;
+      const rawPrice = operation === "buy" ? item.askPrice : item.bidPrice;
+      const basePrice = hasManualPrice ? Number(ov.price) : rawPrice;
       const feePct = hasManualFee ? Number(ov.feePct) : item.defaultFeePct;
 
       const feePerUsd = basePrice != null ? basePrice * (feePct / 100) : null;
-      const finalPrice = basePrice != null ? basePrice + feePerUsd : null;
+      // Al comprar: pagás base + comisión. Al vender: recibís base - comisión.
+      const finalPrice = basePrice != null
+        ? (operation === "buy" ? basePrice + feePerUsd : basePrice - feePerUsd)
+        : null;
 
       let sourceType = item.source;
       let sourceLabel = item.sourceLabel;
@@ -1070,13 +1212,13 @@
       render();
     }
 
-    function setFilter(f) {
+    function setFilter(f, shouldRender = true) {
       activeFilter = f;
       document.getElementById("filterAll").classList.toggle("active", f === "all");
       document.getElementById("filterFav").classList.toggle("active", f === "fav");
       document.getElementById("filterOficial").classList.toggle("active", f === "Oficial");
       document.getElementById("filterMep").classList.toggle("active", f === "MEP");
-      render();
+      if (shouldRender) render();
     }
 
     function toggleDrawer(id) {
@@ -1086,27 +1228,35 @@
     }
 
     function updateOverride(id, field, value) {
-      if (!overrides[id]) overrides[id] = {};
-      if (value === "" || value === null) delete overrides[id][field];
-      else overrides[id][field] = Number(value);
-      if (Object.keys(overrides[id]).length === 0) delete overrides[id];
+      if (!overrides[operation]) overrides[operation] = {};
+      if (!overrides[operation][id]) overrides[operation][id] = {};
+      if (value === "" || value === null) delete overrides[operation][id][field];
+      else overrides[operation][id][field] = Number(value);
+      if (Object.keys(overrides[operation][id]).length === 0) delete overrides[operation][id];
       saveOverrides();
       render();
     }
 
     function clearItemOverride(id) {
-      delete overrides[id];
+      if (overrides[operation]) delete overrides[operation][id];
       saveOverrides();
       render();
     }
 
     function render() {
+      const isSell = operation === "sell";
       const amount = Math.max(0, Number(document.getElementById("amountInput").value) || 0);
 
+      // Actualizar referencias según modo (venta vs compra)
+      document.getElementById("refOficial").textContent = fmtARS(isSell ? refs.oficialBid : refs.oficialAsk);
+      document.getElementById("refMep").textContent = fmtARS(isSell ? refs.mepBid : refs.mepAsk);
+      document.getElementById("refBlue").textContent = fmtARS(isSell ? refs.blueBid : refs.blueAsk);
+
+      // Ordenar: en compra ascendente (más barato primero); en venta descendente (el que más paga primero)
       const allComputed = items
         .map(computeRow)
         .filter(r => r.finalPrice != null)
-        .sort((a, b) => a.finalPrice - b.finalPrice);
+        .sort((a, b) => isSell ? (b.finalPrice - a.finalPrice) : (a.finalPrice - b.finalPrice));
 
       const visible = allComputed.filter(r => {
         if (activeFilter === "all") return true;
@@ -1117,15 +1267,29 @@
       const best = visible[0] || null;
       const worst = visible[visible.length - 1] || null;
 
+      // Estilos y títulos del Banner
+      const winnerCard = document.getElementById("winnerCard");
+      winnerCard.classList.toggle("sell-theme", isSell);
+
+      document.getElementById("rankingTitle").textContent = isSell
+        ? "Ranking de venta (del que más te paga al que menos paga)"
+        : "Ranking de compra (del más barato al más caro)";
+
+      document.getElementById("winnerPriceLabel").textContent = isSell
+        ? "Recibís neto por USD"
+        : "Precio final por USD";
+
       const scopeLabel = activeFilter === "fav"
-        ? "entre tus 5 opciones"
+        ? "entre tus elegidas"
         : activeFilter === "Oficial"
           ? "en Dólar Oficial"
           : activeFilter === "MEP"
             ? "en Dólar MEP"
             : "entre todos los bancos y brokers";
 
-      document.getElementById("winnerEyebrow").textContent = `🏆 Mejor opción para comprar ahora (${scopeLabel})`;
+      document.getElementById("winnerEyebrow").textContent = isSell
+        ? `🏆 Mejor opción para vender ahora (${scopeLabel})`
+        : `🏆 Mejor opción para comprar ahora (${scopeLabel})`;
 
       if (best) {
         const typeBadge = best.type === "Oficial"
@@ -1135,23 +1299,36 @@
         document.getElementById("winnerTitle").innerHTML = `${best.name} ${typeBadge}`;
         document.getElementById("winnerPrice").textContent = fmtARS(best.finalPrice);
 
-        let subText = `Base ${fmtARS(best.basePrice)} + ${fmtPct(best.feePct)} comisión.`;
+        const feeSign = isSell ? "−" : "+";
+        let subText = `Base ${fmtARS(best.basePrice)} ${feeSign} ${fmtPct(best.feePct)} comisión.`;
+
         if (worst && worst.id !== best.id && amount > 0) {
-          if (simMode === "usd") {
-            const savings = (worst.finalPrice - best.finalPrice) * amount;
-            subText += ` Comprando ${fmtUSD(amount)}, ahorrás hasta ${fmtARS(savings, 0)} frente a ${worst.name} (${worst.type}).`;
+          if (!isSell) {
+            if (simMode === "usd") {
+              const savings = (worst.finalPrice - best.finalPrice) * amount;
+              subText += ` Comprando ${fmtUSD(amount)}, ahorrás hasta ${fmtARS(savings, 0)} frente a ${worst.name} (${worst.type}).`;
+            } else {
+              const bestUsd = amount / best.finalPrice;
+              const extraUsd = bestUsd - (amount / worst.finalPrice);
+              subText += ` Con ${fmtARS(amount, 0)}, recibís ${fmtUSD(bestUsd)} (+${fmtUSD(extraUsd)} más que en ${worst.name} ${worst.type}).`;
+            }
           } else {
-            const bestUsd = amount / best.finalPrice;
-            const extraUsd = bestUsd - (amount / worst.finalPrice);
-            subText += ` Con ${fmtARS(amount, 0)}, recibís ${fmtUSD(bestUsd)} (+${fmtUSD(extraUsd)} más que en ${worst.name} ${worst.type}).`;
+            if (simMode === "usd") {
+              const extraArs = (best.finalPrice - worst.finalPrice) * amount;
+              subText += ` Vendiendo ${fmtUSD(amount)}, te llevás ${fmtARS(extraArs, 0)} más que en ${worst.name} (${worst.type}).`;
+            } else {
+              const bestUsdNeeded = amount / best.finalPrice;
+              const savedUsd = (amount / worst.finalPrice) - bestUsdNeeded;
+              subText += ` Para juntar ${fmtARS(amount, 0)}, vendés ${fmtUSD(bestUsdNeeded)} (ahorrás ${fmtUSD(savedUsd)} frente a ${worst.name}).`;
+            }
           }
         }
         document.getElementById("winnerSub").textContent = subText;
       }
 
-      const minP = best ? best.finalPrice : 1;
-      const maxP = worst ? worst.finalPrice : 1;
-      const spreadRange = Math.max(maxP - minP, 1);
+      const bestP = best ? best.finalPrice : 1;
+      const worstP = worst ? worst.finalPrice : 1;
+      const spreadRange = Math.max(Math.abs(bestP - worstP), 1);
 
       const grid = document.getElementById("cardsGrid");
       grid.innerHTML = visible.map((row, idx) => {
@@ -1168,39 +1345,69 @@
         else if (row.sourceType === "manual") srcBadge = `<span class="badge badge-manual">✎ Manual</span>`;
         else srcBadge = `<span class="badge badge-est">≈ Automático</span>`;
 
-        let diffHtml = `<span class="diff-good">Mejor precio</span>`;
+        let diffHtml = `<span class="diff-good">${isSell ? "Mejor pago" : "Mejor precio"}</span>`;
         if (!isBest && best) {
-          const diffPerUsd = row.finalPrice - best.finalPrice;
-          const diffPct = (diffPerUsd / best.finalPrice) * 100;
-          diffHtml = `<span class="diff-bad">+${fmtARS(diffPerUsd)} (+${fmtPct(diffPct)})</span>`;
-        }
-
-        let simMain = "—";
-        let simSub = "";
-        if (amount > 0) {
-          if (simMode === "usd") {
-            const totalArs = row.finalPrice * amount;
-            const extraArs = best ? (row.finalPrice - best.finalPrice) * amount : 0;
-            simMain = fmtARS(totalArs, 0);
-            simSub = isBest
-              ? `Pagás lo mínimo por ${fmtUSD(amount)}`
-              : `+${fmtARS(extraArs, 0)} más caro`;
+          if (!isSell) {
+            const diffPerUsd = row.finalPrice - best.finalPrice;
+            const diffPct = (diffPerUsd / best.finalPrice) * 100;
+            diffHtml = `<span class="diff-bad">+${fmtARS(diffPerUsd)} (+${fmtPct(diffPct)})</span>`;
           } else {
-            const totalUsd = amount / row.finalPrice;
-            const lostUsd = best ? (amount / best.finalPrice) - totalUsd : 0;
-            simMain = fmtUSD(totalUsd);
-            simSub = isBest ? `Máximo rendimiento` : `${fmtUSD(lostUsd)} menos`;
+            const diffPerUsd = best.finalPrice - row.finalPrice;
+            const diffPct = (diffPerUsd / best.finalPrice) * 100;
+            diffHtml = `<span class="diff-bad">−${fmtARS(diffPerUsd)} (−${fmtPct(diffPct)})</span>`;
           }
         }
 
-        const barPct = Math.round(35 + ((row.finalPrice - minP) / spreadRange) * 65);
+        let simLabel = "";
+        let simMain = "—";
+        let simSub = "";
+
+        if (!isSell) {
+          simLabel = simMode === "usd" ? "Total a pagar" : "Recibís";
+          if (amount > 0) {
+            if (simMode === "usd") {
+              const totalArs = row.finalPrice * amount;
+              const extraArs = best ? (row.finalPrice - best.finalPrice) * amount : 0;
+              simMain = fmtARS(totalArs, 0);
+              simSub = isBest ? `Pagás lo mínimo por ${fmtUSD(amount)}` : `+${fmtARS(extraArs, 0)} más caro`;
+            } else {
+              const totalUsd = amount / row.finalPrice;
+              const lostUsd = best ? (amount / best.finalPrice) - totalUsd : 0;
+              simMain = fmtUSD(totalUsd);
+              simSub = isBest ? `Máximo rendimiento` : `${fmtUSD(lostUsd)} menos`;
+            }
+          }
+        } else {
+          simLabel = simMode === "usd" ? "Recibís en mano" : "USD a vender";
+          if (amount > 0) {
+            if (simMode === "usd") {
+              const totalArs = row.finalPrice * amount;
+              const lessArs = best ? (best.finalPrice - row.finalPrice) * amount : 0;
+              simMain = fmtARS(totalArs, 0);
+              simSub = isBest ? `Máximo en pesos por ${fmtUSD(amount)}` : `−${fmtARS(lessArs, 0)} menos`;
+            } else {
+              const usdNeeded = amount / row.finalPrice;
+              const extraUsd = best ? usdNeeded - (amount / best.finalPrice) : 0;
+              simMain = fmtUSD(usdNeeded);
+              simSub = isBest ? `Vendés menos dólares` : `+${fmtUSD(extraUsd)} más a vender`;
+            }
+          }
+        }
+
+        // En compra: barra más corta = mejor; en venta: barra más larga = mejor
+        const barPct = !isSell
+          ? Math.round(35 + ((row.finalPrice - bestP) / spreadRange) * 65)
+          : Math.round(100 - ((bestP - row.finalPrice) / spreadRange) * 65);
+
         const isOpen = openDrawers.has(row.id);
-        const ov = overrides[row.id] || {};
+        const ov = (overrides[operation] || {})[row.id] || {};
         const priceInputVal = ov.price !== undefined ? ov.price : row.basePrice.toFixed(2);
         const feeInputVal = ov.feePct !== undefined ? ov.feePct : row.defaultFeePct;
 
+        const feeSignText = isSell ? "−" : "+";
+
         return `
-          <article class="quote-card ${isBest ? "best" : ""}">
+          <article class="quote-card ${isBest ? ("best" + (isSell ? " sell-best" : "")) : ""}">
             <div class="card-top">
               <div class="rank-badge">${isBest ? "★" : "#" + (idx + 1)}</div>
 
@@ -1215,19 +1422,19 @@
               </div>
 
               <div class="metric">
-                <span class="metric-label">Base + Comisión</span>
+                <span class="metric-label">Base ${feeSignText} Comisión</span>
                 <span class="metric-val">${fmtARS(row.basePrice)}</span>
-                <span class="metric-sub">Comisión: ${fmtPct(row.feePct)} (${fmtARS(row.feePerUsd)})</span>
+                <span class="metric-sub">Comisión: ${feeSignText}${fmtPct(row.feePct)} (${fmtARS(row.feePerUsd)})</span>
               </div>
 
               <div class="metric">
-                <span class="metric-label">Final por USD</span>
+                <span class="metric-label">${isSell ? "Neto por USD" : "Final por USD"}</span>
                 <span class="metric-val final">${fmtARS(row.finalPrice)}</span>
                 <span class="metric-sub">${diffHtml}</span>
               </div>
 
               <div class="metric">
-                <span class="metric-label">${simMode === "usd" ? "Total a pagar" : "Recibís"}</span>
+                <span class="metric-label">${simLabel}</span>
                 <span class="metric-val">${simMain}</span>
                 <span class="metric-sub ${isBest ? "diff-good" : "diff-bad"}">${simSub}</span>
               </div>
@@ -1245,7 +1452,7 @@
 
             <div class="edit-drawer ${isOpen ? "open" : ""}">
               <div class="field">
-                <label>Cotización base ($ ARS)</label>
+                <label>${isSell ? "Cotización compra ($ ARS)" : "Cotización venta ($ ARS)"}</label>
                 <input
                   type="number"
                   step="0.01"
