@@ -797,8 +797,9 @@
         </div>
       </div>
       <div class="segmented">
-        <button id="brechaScopeAll" class="active" onclick="setBrechaScope('all')">Todas las combinaciones</button>
-        <button id="brechaScopeFav" onclick="setBrechaScope('fav')">Solo mis elegidas</button>
+        <button id="brechaScopeAll" class="active" onclick="setBrechaScope('all')">Todas</button>
+        <button id="brechaScopeLive" onclick="setBrechaScope('live')">Solo 100% en vivo</button>
+        <button id="brechaScopeFav" onclick="setBrechaScope('fav')">Mis elegidas</button>
       </div>
     </section>
 
@@ -1241,10 +1242,10 @@
       if (anySuccess) {
         dot.className = "dot";
         const hhmm = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
-        statusText.textContent = `Actualizado ${hhmm}`;
+        statusText.textContent = `Actualizado ${hhmm} · Auto 60s`;
       } else {
         dot.className = "dot error";
-        statusText.textContent = "Sin conexión a APIs — podés cargar precios manuales";
+        statusText.textContent = "Sin conexión a APIs — reintentando en 60s";
       }
 
       render();
@@ -1278,6 +1279,7 @@
     function setBrechaScope(scope) {
       brechaScope = scope;
       document.getElementById("brechaScopeAll").classList.toggle("active", scope === "all");
+      document.getElementById("brechaScopeLive").classList.toggle("active", scope === "live");
       document.getElementById("brechaScopeFav").classList.toggle("active", scope === "fav");
       render();
     }
@@ -1391,14 +1393,14 @@
 
       const buyOficiales = items
         .filter(i => i.type === "Oficial")
-        .filter(i => brechaScope === "all" || i.fav)
+        .filter(i => brechaScope === "all" || (brechaScope === "fav" ? i.fav : i.source === "live"))
         .filter(i => buyChoice === "all" || i.id === buyChoice)
         .map(i => computeRowFor(i, "buy"))
         .filter(r => r.finalPrice != null);
 
       const sellMeps = items
         .filter(i => i.type === "MEP")
-        .filter(i => brechaScope === "all" || i.fav)
+        .filter(i => brechaScope === "all" || (brechaScope === "fav" ? i.fav : i.source === "live"))
         .filter(i => sellChoice === "all" || i.id === sellChoice)
         .map(i => computeRowFor(i, "sell"))
         .filter(r => r.finalPrice != null);
@@ -1758,6 +1760,8 @@
     }
 
     fetchAllData();
+    // Auto-actualización automática cada 60 segundos sin tocar nada
+    setInterval(fetchAllData, 60000);
   </script>
 </body>
 </html>
