@@ -1422,13 +1422,13 @@
               </div>
 
               <div class="metric">
-                <span class="metric-label">Base ${feeSignText} Comisión</span>
+                <span class="metric-label">${isSell ? "Te pagan (base) − Comisión" : "Base + Comisión"}</span>
                 <span class="metric-val">${fmtARS(row.basePrice)}</span>
                 <span class="metric-sub">Comisión: ${feeSignText}${fmtPct(row.feePct)} (${fmtARS(row.feePerUsd)})</span>
               </div>
 
               <div class="metric">
-                <span class="metric-label">${isSell ? "Neto por USD" : "Final por USD"}</span>
+                <span class="metric-label">${isSell ? "Recibís neto por USD" : "Pagás final por USD"}</span>
                 <span class="metric-val final">${fmtARS(row.finalPrice)}</span>
                 <span class="metric-sub">${diffHtml}</span>
               </div>
@@ -1452,7 +1452,7 @@
 
             <div class="edit-drawer ${isOpen ? "open" : ""}">
               <div class="field">
-                <label>${isSell ? "Cotización compra ($ ARS)" : "Cotización venta ($ ARS)"}</label>
+                <label>${isSell ? "Precio al que vendés tu USD ($ ARS)" : "Precio al que comprás el USD ($ ARS)"}</label>
                 <input
                   type="number"
                   step="0.01"
