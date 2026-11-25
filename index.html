@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comparador Dólar AR — Oficial vs MEP</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --surface: #131926;
+      --surface-2: #1a2234;
+      --border: #263148;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #10b981;
+      --accent-soft: rgba(16, 185, 129, 0.14);
+      --blue: #38bdf8;
+      --blue-soft: rgba(56, 189, 248, 0.14);
+      --purple: #a78bfa;
+      --purple-soft: rgba(167, 139, 250, 0.14);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.14);
+      --rose: #fb7185;
+      --rose-soft: rgba(251, 113, 133, 0.14);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: radial-gradient(circle at top right, #132038 0%, var(--bg) 52%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding: 24px 16px 64px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10b981, #0ea5e9);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #06131a;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.28);
+    }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .dot.loading {
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+      animation: pulse 1s infinite;
+    }
+
+    .dot.error {
+      background: var(--rose);
+      box-shadow: 0 0 8px var(--rose);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #041b12;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 9px 15px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: #3b4b6b; }
+
+    .winner-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(14, 165, 233, 0.08) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.42);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .winner-eyebrow {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .winner-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .winner-sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .winner-price-box {
+      text-align: right;
+      background: rgba(11, 15, 23, 0.55);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 12px 18px;
+      border-radius: 12px;
+    }
+
+    .winner-price-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .winner-price {
+      font-size: 1.9rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    .sim-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .segmented button {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .segmented button.active {
+      background: var(--surface-2);
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .amount-input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      height: 38px;
+    }
+
+    .amount-input-wrap:focus-within {
+      border-color: var(--blue);
+    }
+
+    .amount-prefix {
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-right: 6px;
+    }
+
+    .amount-input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      width: 130px;
+      outline: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ref-strip {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .ref-item strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .filter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .quote-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      transition: border-color 0.15s ease;
+    }
+
+    .quote-card.best {
+      border-color: rgba(16, 185, 129, 0.55);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
+    }
+
+    .card-top {
+      display: grid;
+      grid-template-columns: auto 1.45fr 1fr 1fr 1.1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .rank-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.88rem;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .quote-card.best .rank-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .entity-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .entity-name-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .entity-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-oficial { background: var(--blue-soft); color: var(--blue); }
+    .badge-mep { background: var(--purple-soft); color: var(--purple); }
+    .badge-live { background: var(--accent-soft); color: var(--accent); }
+    .badge-est { background: var(--amber-soft); color: var(--amber); }
+    .badge-manual { background: rgba(148, 163, 184, 0.16); color: #cbd5e1; }
+    .badge-fav { background: rgba(56, 189, 248, 0.1); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.25); }
+
+    .entity-meta {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-label {
+      font-size: 0.71rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-val.final {
+      font-size: 1.22rem;
+      font-weight: 800;
+    }
+
+    .quote-card.best .metric-val.final {
+      color: var(--accent);
+    }
+
+    .metric-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .diff-bad { color: var(--rose); }
+    .diff-good { color: var(--accent); font-weight: 600; }
+
+    .bar-track {
+      height: 5px;
+      background: var(--bg);
+      border-radius: 999px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      transition: width 0.35s ease;
+    }
+
+    .quote-card.best .bar-fill {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .edit-drawer {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      display: none;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .edit-drawer.open { display: flex; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .field input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      width: 140px;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+    }
+
+    .field input:focus { border-color: var(--blue); }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .info-card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p, .info-card li {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .info-card ul {
+      padding-left: 18px;
+    }
+
+    .highlight-box {
+      background: var(--amber-soft);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: #fde68a;
+    }
+
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 860px) {
+      .card-top {
+        grid-template-columns: auto 1fr auto;
+      }
+      .winner-card { grid-template-columns: 1fr; }
+      .winner-price-box { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">$</div>
+        <div>
+          <h1>Comparador Dólar AR</h1>
+          <div class="subtitle">Bancos Oficiales y Dólar MEP en vivo con comisiones incluidas</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="status-pill" id="statusPill">
+          <span class="dot loading" id="statusDot"></span>
+          <span id="statusText">Cargando cotizaciones...</span>
+        </div>
+        <button class="btn-primary" id="refreshBtn" onclick="fetchAllData()">↻ Actualizar</button>
+        <button class="btn-ghost" onclick="resetAllOverrides()" title="Borrar precios y comisiones editados manualmente">Restablecer</button>
+      </div>
+    </header>
+
+    <!-- Winner Banner -->
+    <section class="winner-card" id="winnerCard">
+      <div>
+        <div class="winner-eyebrow" id="winnerEyebrow">🏆 Mejor opción para comprar ahora</div>
+        <div class="winner-title" id="winnerTitle">Calculando...</div>
+        <div class="winner-sub" id="winnerSub">Obteniendo cotizaciones en vivo y aplicando comisiones.</div>
+      </div>
+      <div class="winner-price-box">
+        <div class="winner-price-label">Precio final por USD</div>
+        <div class="winner-price" id="winnerPrice">—</div>
+      </div>
+    </section>
+
+    <!-- Simulator Bar -->
+    <section class="sim-bar">
+      <div class="sim-group">
+        <div class="segmented" role="group" aria-label="Modo de simulación">
+          <button id="modeUsdBtn" class="active" onclick="setSimMode('usd')">Quiero comprar USD</button>
+          <button id="modeArsBtn" onclick="setSimMode('ars')">Tengo pesos ARS</button>
+        </div>
+        <div class="amount-input-wrap">
+          <span class="amount-prefix" id="amountPrefix">US$</span>
+          <input type="number" id="amountInput" class="amount-input" value="500" min="1" step="10" oninput="render()" />
+        </div>
+      </div>
+
+      <div class="ref-strip">
+        <span class="ref-item">Ref. Oficial (BNA): <strong id="refOficial">—</strong></span>
+        <span class="ref-item">Ref. MEP (AL30): <strong id="refMep">—</strong></span>
+        <span class="ref-item">Dólar Blue: <strong id="refBlue">—</strong></span>
+      </div>
+    </section>
+
+    <!-- Filter & Ranking -->
+    <div class="filter-row">
+      <div class="section-title">Ranking de compra (del más barato al más caro)</div>
+      <div class="segmented">
+        <button id="filterAll" class="active" onclick="setFilter('all')">Todos (15)</button>
+        <button id="filterFav" onclick="setFilter('fav')">Mis 5 elegidas</button>
+        <button id="filterOficial" onclick="setFilter('Oficial')">Solo Oficial</button>
+        <button id="filterMep" onclick="setFilter('MEP')">Solo MEP</button>
+      </div>
+    </div>
+
+    <section class="cards-grid" id="cardsGrid"></section>
+
+    <!-- Fees & Platform Details -->
+    <div class="section-title" style="margin-bottom: 10px;">Costos, comisiones y cómo se calculan los datos</div>
+    <section class="info-grid">
+      <div class="info-card">
+        <h3>🟣 Brubank — Dólar MEP <span class="badge badge-mep">Tiene costo</span></h3>
+        <ul>
+          <li><strong>Comisión:</strong> <strong>0,6%</strong> por operación (compra y venta), aplicada automáticamente al MEP AL30 en vivo.</li>
+          <li><strong>Operador:</strong> Opera vía <strong>Balanz Capital</strong>.</li>
+          <li><strong>Acreditación:</strong> 24 horas hábiles al comprar; en el día al vender.</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>⚡ Cocos, Ualá, Fiwind &amp; Plus — MEP</h3>
+        <ul>
+          <li><strong>Cocos MEP, Fiwind MEP y Plus Inversiones:</strong> cotización <strong>en vivo</strong> desde <em>ComparaDólar</em>. En Cocos se suma 0,45% estándar (editable a 0% si tenés plan bonificado).</li>
+          <li><strong>Ualá MEP:</strong> en la app ya viene la comisión incluida (hasta ~1% en bonos); al no tener API pública de MEP, se estima automáticamente con MEP AL30 + 1%.</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🏦 Bancos Oficiales en vivo y Galicia</h3>
+        <ul>
+          <li><strong>En vivo 100% automático:</strong> Ualá, Banco Nación, Provincia, Ciudad, Hipotecario, Brubank Oficial, Cocos Bank, Balanz y Reba vienen directo desde <em>ComparaDólar</em>.</li>
+          <li><strong>Banco Galicia:</strong> como Galicia no tiene API pública abierta, se calcula automáticamente usando el <strong>Oficial en vivo + spread automático</strong> (0% en horario bancario lun-vie 10 a 15hs; +0,95% fuera de horario / fines de semana / feriados).</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Fuentes en vivo: ComparaDólar API · CriptoYa API · DolarApi. Auto-actualización disponible con el botón Actualizar. Verificá siempre el boleto final antes de confirmar.
+    </footer>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "comparador_dolar_ar_overrides_v2";
+
+    // Las 5 originales del usuario marcadas con fav: true + 10 bancos/brokers en vivo
+    const DEFAULT_ITEMS = [
+      // === TUS 5 PRINCIPALES ===
+      {
+        id: "uala-oficial",
+        slug: "uala",
+        name: "Ualá",
+        type: "Oficial",
+        fav: true,
+        defaultFeePct: 0,
+        feeNote: "Sin comisión extra · 24x7",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "galicia-oficial",
+        slug: null,
+        name: "Banco Galicia",
+        type: "Oficial",
+        fav: true,
+        defaultFeePct: 0,
+        feeNote: "Sin comisión extra sobre precio venta",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "cocos-mep",
+        slug: "cocos",
+        name: "Cocos Capital",
+        type: "MEP",
+        fav: true,
+        defaultFeePct: 0.45,
+        feeNote: "Comisión estándar ~0,45% (editable a 0% si bonificado)",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "brubank-mep",
+        slug: null,
+        name: "Brubank",
+        type: "MEP",
+        fav: true,
+        defaultFeePct: 0.6,
+        feeNote: "Comisión 0,6% (vía Balanz) · Acredita en 24hs hábiles",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "uala-mep",
+        slug: null,
+        name: "Ualá",
+        type: "MEP",
+        fav: true,
+        defaultFeePct: 1.0,
+        feeNote: "Comisión incluida en la app (est. ~1% s/ MEP)",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+
+      // === OTROS BANCOS Y BROKERS EN VIVO ===
+      {
+        id: "balanz-oficial",
+        slug: "balanz",
+        name: "Balanz",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Dólar oficial en vivo · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "ciudad-oficial",
+        slug: "banco-ciudad",
+        name: "Banco Ciudad",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Banco público · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "nacion-oficial",
+        slug: "banco-nacion",
+        name: "Banco Nación",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Referencia BNA · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "provincia-oficial",
+        slug: "banco-provincia",
+        name: "Banco Provincia",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "BAPRO · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "hipotecario-oficial",
+        slug: "banco-hipotecario",
+        name: "Banco Hipotecario",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Banco privado · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "cocos-bank-oficial",
+        slug: "cocos-bank",
+        name: "Cocos Bank",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Oficial vía Cocos · Sin comisión extra",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "reba-oficial",
+        slug: "reba",
+        name: "Reba",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Billetera / Banco digital · 24x7",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "brubank-oficial",
+        slug: "brubank-ultra",
+        name: "Brubank",
+        type: "Oficial",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "Dólar oficial en Brubank · 24x7",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "fiwind-mep",
+        slug: "fiwind-mep",
+        name: "Fiwind",
+        type: "MEP",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "MEP en vivo (spread incluido)",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      },
+      {
+        id: "plus-mep",
+        slug: "plus-inversiones",
+        name: "Plus Inversiones",
+        type: "MEP",
+        fav: false,
+        defaultFeePct: 0,
+        feeNote: "MEP en vivo (spread incluido)",
+        basePrice: null,
+        source: "loading",
+        sourceLabel: "Cargando..."
+      }
+    ];
+
+    let items = structuredClone(DEFAULT_ITEMS);
+    let overrides = loadOverrides();
+    let simMode = "usd";
+    let activeFilter = "all";
+    let openDrawers = new Set();
+    let refs = { oficial: null, mep: null, blue: null };
+
+    function loadOverrides() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch { return {}; }
+    }
+
+    function saveOverrides() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides)); }
+      catch {}
+    }
+
+    function resetAllOverrides() {
+      overrides = {};
+      saveOverrides();
+      openDrawers.clear();
+      render();
+    }
+
+    const fmtARS = (n, decimals = 2) => {
+      if (n == null || isNaN(n)) return "—";
+      return "$ " + Number(n).toLocaleString("es-AR", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    };
+
+    const fmtUSD = (n) => {
+      if (n == null || isNaN(n)) return "—";
+      return "US$ " + Number(n).toLocaleString("es-AR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    };
+
+    const fmtPct = (n) => {
+      if (n == null || isNaN(n)) return "0%";
+      return Number(n).toLocaleString("es-AR", { maximumFractionDigits: 2 }) + "%";
+    };
+
+    // Detecta si estamos en horario bancario habitual en Argentina (Lun-Vie 10 a 15hs ART)
+    function isArgentinaBankingHours() {
+      const now = new Date();
+      const art = new Date(now.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
+      const day = art.getDay(); // 0 dom, 6 sab
+      const hr = art.getHours();
+      return day >= 1 && day <= 5 && hr >= 10 && hr < 15;
+    }
+
+    async function fetchJsonSafe(url) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return await res.json();
+      } catch (err) {
+        console.warn("Error fetching", url, err);
+        return null;
+      }
+    }
+
+    async function fetchAllData() {
+      const btn = document.getElementById("refreshBtn");
+      const dot = document.getElementById("statusDot");
+      const statusText = document.getElementById("statusText");
+
+      btn.disabled = true;
+      dot.className = "dot loading";
+      statusText.textContent = "Actualizando cotizaciones...";
+
+      const [comparadolar, criptoyaDolar, criptoyaBancos, dolarApi] = await Promise.all([
+        fetchJsonSafe("https://api.comparadolar.ar/usd"),
+        fetchJsonSafe("https://criptoya.com/api/dolar"),
+        fetchJsonSafe("https://criptoya.com/api/bancostodos"),
+        fetchJsonSafe("https://dolarapi.com/v1/dolares")
+      ]);
+
+      const oficialApi = Array.isArray(dolarApi) ? dolarApi.find(d => d.casa === "oficial") : null;
+      const bolsaApi = Array.isArray(dolarApi) ? dolarApi.find(d => d.casa === "bolsa") : null;
+      const blueApi = Array.isArray(dolarApi) ? dolarApi.find(d => d.casa === "blue") : null;
+
+      const mepRefPrice =
+        criptoyaDolar?.mep?.al30?.["24hs"]?.price ||
+        bolsaApi?.venta ||
+        null;
+
+      const oficialRefPrice =
+        criptoyaDolar?.oficial?.ask ||
+        oficialApi?.venta ||
+        null;
+
+      const blueRefPrice =
+        criptoyaDolar?.blue?.ask ||
+        blueApi?.venta ||
+        null;
+
+      refs = { oficial: oficialRefPrice, mep: mepRefPrice, blue: blueRefPrice };
+
+      document.getElementById("refOficial").textContent = fmtARS(refs.oficial);
+      document.getElementById("refMep").textContent = fmtARS(refs.mep);
+      document.getElementById("refBlue").textContent = fmtARS(refs.blue);
+
+      const cdMap = new Map();
+      if (Array.isArray(comparadolar)) {
+        comparadolar.forEach(entry => {
+          if (entry && entry.slug) cdMap.set(entry.slug, entry);
+        });
+      }
+
+      // 1. Todos los items que vienen directo de ComparaDólar en vivo
+      items.forEach(item => {
+        if (!item.slug) return;
+        const entry = cdMap.get(item.slug);
+        if (entry && entry.ask) {
+          item.basePrice = Number(entry.ask);
+          item.source = entry.stale ? "est" : "live";
+          item.sourceLabel = entry.stale
+            ? "ComparaDólar (dato demorado)"
+            : "ComparaDólar (En vivo)";
+        }
+      });
+
+      const getItem = (id) => items.find(i => i.id === id);
+
+      // 2. Banco Galicia Oficial: automático!
+      // Si CriptoYa tiene Galicia fresco (<= 2 días), lo usa en vivo.
+      // Si no, calcula automáticamente con BNA en vivo + spread típico Galicia (0% en horario bancario, +0,95% fuera de horario/feriado).
+      const galicia = getItem("galicia-oficial");
+      const cyGalicia = criptoyaBancos?.galicia;
+      const nowSec = Date.now() / 1000;
+      const galiciaAgeDays = cyGalicia?.time ? (nowSec - cyGalicia.time) / 86400 : 999;
+
+      if (cyGalicia && cyGalicia.ask && galiciaAgeDays <= 2) {
+        galicia.basePrice = Number(cyGalicia.ask);
+        galicia.source = "live";
+        galicia.sourceLabel = "CriptoYa (En vivo)";
+      } else if (oficialRefPrice) {
+        const inHours = isArgentinaBankingHours();
+        const spreadFactor = inHours ? 1.0 : 1.0095;
+        galicia.basePrice = Math.round(oficialRefPrice * spreadFactor);
+        galicia.source = "est";
+        galicia.sourceLabel = inHours
+          ? "Automático (Oficial BNA horario bancario)"
+          : "Automático (Oficial BNA + 0,95% fuera de horario)";
+      }
+
+      // 3. Brubank MEP (MEP AL30 en vivo + 0,6% comisión Brubank)
+      const brubankMep = getItem("brubank-mep");
+      if (mepRefPrice) {
+        brubankMep.basePrice = Number(mepRefPrice);
+        brubankMep.source = "est";
+        brubankMep.sourceLabel = "Automático (MEP AL30 en vivo + 0,6% Brubank)";
+      }
+
+      // 4. Ualá MEP (MEP AL30 en vivo + 1% estimado)
+      const ualaMep = getItem("uala-mep");
+      if (mepRefPrice) {
+        ualaMep.basePrice = Number(mepRefPrice);
+        ualaMep.source = "est";
+        ualaMep.sourceLabel = "Automático (MEP AL30 en vivo + comisión est.)";
+      }
+
+      const anySuccess = Boolean(comparadolar || criptoyaDolar || dolarApi);
+      btn.disabled = false;
+      if (anySuccess) {
+        dot.className = "dot";
+        const hhmm = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+        statusText.textContent = `Actualizado ${hhmm}`;
+      } else {
+        dot.className = "dot error";
+        statusText.textContent = "Sin conexión a APIs — podés cargar precios manuales";
+      }
+
+      render();
+    }
+
+    function computeRow(item) {
+      const ov = overrides[item.id] || {};
+      const hasManualPrice = ov.price !== undefined && ov.price !== "" && !isNaN(Number(ov.price));
+      const hasManualFee = ov.feePct !== undefined && ov.feePct !== "" && !isNaN(Number(ov.feePct));
+
+      const basePrice = hasManualPrice ? Number(ov.price) : item.basePrice;
+      const feePct = hasManualFee ? Number(ov.feePct) : item.defaultFeePct;
+
+      const feePerUsd = basePrice != null ? basePrice * (feePct / 100) : null;
+      const finalPrice = basePrice != null ? basePrice + feePerUsd : null;
+
+      let sourceType = item.source;
+      let sourceLabel = item.sourceLabel;
+      if (hasManualPrice) {
+        sourceType = "manual";
+        sourceLabel = "Precio ingresado manualmente";
+      }
+
+      return {
+        ...item,
+        basePrice,
+        feePct,
+        feePerUsd,
+        finalPrice,
+        sourceType,
+        sourceLabel
+      };
+    }
+
+    function setSimMode(mode) {
+      simMode = mode;
+      document.getElementById("modeUsdBtn").classList.toggle("active", mode === "usd");
+      document.getElementById("modeArsBtn").classList.toggle("active", mode === "ars");
+      const input = document.getElementById("amountInput");
+      document.getElementById("amountPrefix").textContent = mode === "usd" ? "US$" : "$";
+      if (mode === "ars" && Number(input.value) < 5000) {
+        input.value = 500000;
+        input.step = 10000;
+      } else if (mode === "usd" && Number(input.value) >= 5000) {
+        input.value = 500;
+        input.step = 10;
+      }
+      render();
+    }
+
+    function setFilter(f) {
+      activeFilter = f;
+      document.getElementById("filterAll").classList.toggle("active", f === "all");
+      document.getElementById("filterFav").classList.toggle("active", f === "fav");
+      document.getElementById("filterOficial").classList.toggle("active", f === "Oficial");
+      document.getElementById("filterMep").classList.toggle("active", f === "MEP");
+      render();
+    }
+
+    function toggleDrawer(id) {
+      if (openDrawers.has(id)) openDrawers.delete(id);
+      else openDrawers.add(id);
+      render();
+    }
+
+    function updateOverride(id, field, value) {
+      if (!overrides[id]) overrides[id] = {};
+      if (value === "" || value === null) delete overrides[id][field];
+      else overrides[id][field] = Number(value);
+      if (Object.keys(overrides[id]).length === 0) delete overrides[id];
+      saveOverrides();
+      render();
+    }
+
+    function clearItemOverride(id) {
+      delete overrides[id];
+      saveOverrides();
+      render();
+    }
+
+    function render() {
+      const amount = Math.max(0, Number(document.getElementById("amountInput").value) || 0);
+
+      const allComputed = items
+        .map(computeRow)
+        .filter(r => r.finalPrice != null)
+        .sort((a, b) => a.finalPrice - b.finalPrice);
+
+      const visible = allComputed.filter(r => {
+        if (activeFilter === "all") return true;
+        if (activeFilter === "fav") return r.fav;
+        return r.type === activeFilter;
+      });
+
+      const best = visible[0] || null;
+      const worst = visible[visible.length - 1] || null;
+
+      const scopeLabel = activeFilter === "fav"
+        ? "entre tus 5 opciones"
+        : activeFilter === "Oficial"
+          ? "en Dólar Oficial"
+          : activeFilter === "MEP"
+            ? "en Dólar MEP"
+            : "entre todos los bancos y brokers";
+
+      document.getElementById("winnerEyebrow").textContent = `🏆 Mejor opción para comprar ahora (${scopeLabel})`;
+
+      if (best) {
+        const typeBadge = best.type === "Oficial"
+          ? `<span class="badge badge-oficial">Dólar Oficial</span>`
+          : `<span class="badge badge-mep">Dólar MEP</span>`;
+
+        document.getElementById("winnerTitle").innerHTML = `${best.name} ${typeBadge}`;
+        document.getElementById("winnerPrice").textContent = fmtARS(best.finalPrice);
+
+        let subText = `Base ${fmtARS(best.basePrice)} + ${fmtPct(best.feePct)} comisión.`;
+        if (worst && worst.id !== best.id && amount > 0) {
+          if (simMode === "usd") {
+            const savings = (worst.finalPrice - best.finalPrice) * amount;
+            subText += ` Comprando ${fmtUSD(amount)}, ahorrás hasta ${fmtARS(savings, 0)} frente a ${worst.name} (${worst.type}).`;
+          } else {
+            const bestUsd = amount / best.finalPrice;
+            const extraUsd = bestUsd - (amount / worst.finalPrice);
+            subText += ` Con ${fmtARS(amount, 0)}, recibís ${fmtUSD(bestUsd)} (+${fmtUSD(extraUsd)} más que en ${worst.name} ${worst.type}).`;
+          }
+        }
+        document.getElementById("winnerSub").textContent = subText;
+      }
+
+      const minP = best ? best.finalPrice : 1;
+      const maxP = worst ? worst.finalPrice : 1;
+      const spreadRange = Math.max(maxP - minP, 1);
+
+      const grid = document.getElementById("cardsGrid");
+      grid.innerHTML = visible.map((row, idx) => {
+        const isBest = idx === 0;
+
+        const typeBadge = row.type === "Oficial"
+          ? `<span class="badge badge-oficial">Oficial</span>`
+          : `<span class="badge badge-mep">MEP</span>`;
+
+        const favBadge = row.fav ? `<span class="badge badge-fav">★ Elegida</span>` : "";
+
+        let srcBadge = "";
+        if (row.sourceType === "live") srcBadge = `<span class="badge badge-live">● En vivo</span>`;
+        else if (row.sourceType === "manual") srcBadge = `<span class="badge badge-manual">✎ Manual</span>`;
+        else srcBadge = `<span class="badge badge-est">≈ Automático</span>`;
+
+        let diffHtml = `<span class="diff-good">Mejor precio</span>`;
+        if (!isBest && best) {
+          const diffPerUsd = row.finalPrice - best.finalPrice;
+          const diffPct = (diffPerUsd / best.finalPrice) * 100;
+          diffHtml = `<span class="diff-bad">+${fmtARS(diffPerUsd)} (+${fmtPct(diffPct)})</span>`;
+        }
+
+        let simMain = "—";
+        let simSub = "";
+        if (amount > 0) {
+          if (simMode === "usd") {
+            const totalArs = row.finalPrice * amount;
+            const extraArs = best ? (row.finalPrice - best.finalPrice) * amount : 0;
+            simMain = fmtARS(totalArs, 0);
+            simSub = isBest
+              ? `Pagás lo mínimo por ${fmtUSD(amount)}`
+              : `+${fmtARS(extraArs, 0)} más caro`;
+          } else {
+            const totalUsd = amount / row.finalPrice;
+            const lostUsd = best ? (amount / best.finalPrice) - totalUsd : 0;
+            simMain = fmtUSD(totalUsd);
+            simSub = isBest ? `Máximo rendimiento` : `${fmtUSD(lostUsd)} menos`;
+          }
+        }
+
+        const barPct = Math.round(35 + ((row.finalPrice - minP) / spreadRange) * 65);
+        const isOpen = openDrawers.has(row.id);
+        const ov = overrides[row.id] || {};
+        const priceInputVal = ov.price !== undefined ? ov.price : row.basePrice.toFixed(2);
+        const feeInputVal = ov.feePct !== undefined ? ov.feePct : row.defaultFeePct;
+
+        return `
+          <article class="quote-card ${isBest ? "best" : ""}">
+            <div class="card-top">
+              <div class="rank-badge">${isBest ? "★" : "#" + (idx + 1)}</div>
+
+              <div class="entity-info">
+                <div class="entity-name-row">
+                  <span class="entity-name">${row.name}</span>
+                  ${typeBadge}
+                  ${srcBadge}
+                  ${favBadge}
+                </div>
+                <div class="entity-meta">${row.sourceLabel} · ${row.feeNote}</div>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">Base + Comisión</span>
+                <span class="metric-val">${fmtARS(row.basePrice)}</span>
+                <span class="metric-sub">Comisión: ${fmtPct(row.feePct)} (${fmtARS(row.feePerUsd)})</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">Final por USD</span>
+                <span class="metric-val final">${fmtARS(row.finalPrice)}</span>
+                <span class="metric-sub">${diffHtml}</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-label">${simMode === "usd" ? "Total a pagar" : "Recibís"}</span>
+                <span class="metric-val">${simMain}</span>
+                <span class="metric-sub ${isBest ? "diff-good" : "diff-bad"}">${simSub}</span>
+              </div>
+
+              <div>
+                <button class="btn-ghost" onclick="toggleDrawer('${row.id}')">
+                  ${isOpen ? "Cerrar" : "Editar"}
+                </button>
+              </div>
+            </div>
+
+            <div class="bar-track">
+              <div class="bar-fill" style="width: ${barPct}%"></div>
+            </div>
+
+            <div class="edit-drawer ${isOpen ? "open" : ""}">
+              <div class="field">
+                <label>Cotización base ($ ARS)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value="${priceInputVal}"
+                  onchange="updateOverride('${row.id}', 'price', this.value)"
+                />
+              </div>
+              <div class="field">
+                <label>Comisión (%)</label>
+                <input
+                  type="number"
+                  step="0.05"
+                  min="0"
+                  max="15"
+                  value="${feeInputVal}"
+                  onchange="updateOverride('${row.id}', 'feePct', this.value)"
+                />
+              </div>
+              <button class="btn-ghost" onclick="clearItemOverride('${row.id}')">Volver al valor automático</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    fetchAllData();
+  </script>
+</body>
+</html>
