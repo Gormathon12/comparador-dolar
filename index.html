@@ -1024,8 +1024,8 @@
         name: "Ualá",
         type: "MEP",
         fav: true,
-        defaultFeePct: 1.0,
-        feeNote: "Comisión incluida en la app (est. ~1% s/ MEP)",
+        defaultFeePct: 0,
+        feeNote: "Precio final estimado (promedio MEP minorista en vivo, comisión incluida)",
         askPrice: null,
         bidPrice: null,
         source: "loading",
@@ -1396,20 +1396,33 @@
           : "Automático (Oficial BNA ± 0,95% fuera de horario)";
       }
 
+      // Promedio en vivo de MEP minorista (Cocos + Fiwind + Plus) — refleja el spread real de apps minoristas
+      const liveRetailMeps = ["cocos", "fiwind-mep", "plus-inversiones"]
+        .map(s => cdMap.get(s))
+        .filter(e => e && e.ask && e.bid);
+
+      const retailMepAsk = liveRetailMeps.length
+        ? liveRetailMeps.reduce((acc, e) => acc + Number(e.ask), 0) / liveRetailMeps.length
+        : refs.mepAsk;
+
+      const retailMepBid = liveRetailMeps.length
+        ? liveRetailMeps.reduce((acc, e) => acc + Number(e.bid), 0) / liveRetailMeps.length
+        : refs.mepBid;
+
       const brubankMep = getItem("brubank-mep");
-      if (refs.mepAsk) {
-        brubankMep.askPrice = Number(refs.mepAsk);
-        brubankMep.bidPrice = Number(refs.mepBid || refs.mepAsk);
+      if (refs.mepAsk || retailMepAsk) {
+        brubankMep.askPrice = Number(refs.mepAsk || retailMepAsk);
+        brubankMep.bidPrice = Number(refs.mepBid || retailMepBid);
         brubankMep.source = "est";
-        brubankMep.sourceLabel = "Automático (MEP en vivo ± 0,6% Brubank)";
+        brubankMep.sourceLabel = "Automático (MEP bolsa ± 0,6% Brubank)";
       }
 
       const ualaMep = getItem("uala-mep");
-      if (refs.mepAsk) {
-        ualaMep.askPrice = Number(refs.mepAsk);
-        ualaMep.bidPrice = Number(refs.mepBid || refs.mepAsk);
+      if (retailMepAsk && retailMepBid) {
+        ualaMep.askPrice = Number(retailMepAsk.toFixed(2));
+        ualaMep.bidPrice = Number(retailMepBid.toFixed(2));
         ualaMep.source = "est";
-        ualaMep.sourceLabel = "Automático (MEP en vivo ± comisión est.)";
+        ualaMep.sourceLabel = "Automático (promedio MEP minorista en vivo)";
       }
 
       populateBrechaSelects();
